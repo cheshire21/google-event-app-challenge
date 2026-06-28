@@ -1,0 +1,13 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: sh -c "pnpm install && pnpm dev"
+    ports:
+      - "3000:3000" # web
+      - "3001:3001" # api
+    environment:
+      PORT: "3001"
+    volumes:
+      - .:/app
