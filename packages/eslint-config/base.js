@@ -12,7 +12,7 @@ import onlyWarn from "eslint-plugin-only-warn";
 export const config = [
   js.configs.recommended,
   eslintConfigPrettier,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.strict,
   {
     plugins: {
       turbo: turboPlugin,
@@ -24,6 +24,20 @@ export const config = [
   {
     plugins: {
       onlyWarn,
+    },
+  },
+  {
+    rules: {
+      "no-console": "warn",
+      "eqeqeq": ["error", "always", { null: "ignore" }],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports" },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
     },
   },
   {
