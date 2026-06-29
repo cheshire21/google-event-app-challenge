@@ -30,6 +30,8 @@
   --color-coral: var(--color-coral);
   --color-teal: var(--color-teal);
   --color-brown: var(--color-brown);
+  --font-quicksand: var(--font-quicksand);
+  --font-figtree: var(--font-figtree);
 }
 
 :root {
@@ -85,10 +87,19 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-figtree);
   }
   html {
     max-width: 100vw;
     overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-quicksand);
   }
 }
 

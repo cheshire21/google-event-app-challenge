@@ -1,7 +1,5 @@
-import { type JSX } from "react";
+import { SignInPage } from "@/features/auth/components/SignInPage";
 
-const LoginPage = (): JSX.Element => {
-  return <div>Login</div>;
-};
-
-export default LoginPage;
+export default function LoginPage() {
+  return <SignInPage />;
+}

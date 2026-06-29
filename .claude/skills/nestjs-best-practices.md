@@ -30,6 +30,8 @@ export class Create<Feature>Dto {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  // add more fields with a blank line between each property block
 }
 ```
 
@@ -48,10 +50,20 @@ import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class <Feature>ResponseDto {
-  @Expose() @ApiProperty() id: string;
-  @Expose() @ApiProperty() createdAt: Date;
-  @Expose() @ApiProperty() updatedAt: Date;
+  @Expose()
+  @ApiProperty()
+  id: string;
+
+  @Expose()
+  @ApiProperty()
+  createdAt: Date;
+
+  @Expose()
+  @ApiProperty()
+  updatedAt: Date;
+
   // only add @Expose() to fields that should leave the service layer
+  // internal fields (e.g. auth0Id) are omitted — no @Expose() = excluded
 }
 ```
 

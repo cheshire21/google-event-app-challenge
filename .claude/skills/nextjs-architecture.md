@@ -133,33 +133,37 @@ export const deleteNote = (id: number) =>
 
 ### `components/` — Shared UI
 
-Three sub-layers with a strict placement rule:
+Two sub-layers:
 
-| Sub-layer | What goes here | Examples |
+| Sub-layer | What goes here |
+|---|---|
+| `ui/` | shadcn/ui components — never modify these directly |
+| `<ComponentName>/` | Custom app-wide components with their own logic/tests |
+
+#### Available shadcn components (`components/ui/`)
+
+| Component | Import | Key props / variants |
 |---|---|---|
-| `ui/` | shadcn/ui components + base primitives | `button`, `input`, `form`, `dialog`, `label`, `Skeleton` |
-| `layout/` | Structural shell components — compose the page frame | `Sidebar`, `NotesArea` |
-| `<ComponentName>/` | Custom global components — app-specific, used across features | `NoteCard/`, `CategoryDropdown/`, `Modal`, `PasswordInput/` |
+| `Button` | `@/components/ui/button` | `variant`: default, outline, ghost, secondary, destructive, link · `size`: default, sm, lg, icon |
+| `Card` | `@/components/ui/card` | `Card`, `CardHeader`, `CardContent`, `CardFooter`, `CardTitle`, `CardDescription` |
+| `Input` | `@/components/ui/input` | standard HTML input, styled |
+| `Form` | `@/components/ui/form` | `Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormMessage` — wraps react-hook-form |
+| `Dialog` | `@/components/ui/dialog` | `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogTitle`, `DialogDescription`, `DialogFooter` |
+| `Badge` | `@/components/ui/badge` | `variant`: default, secondary, destructive, outline, ghost, link |
+| `Label` | `@/components/ui/label` | standard label, styled |
 
-**Rule:** `components/ui/` is for shadcn/ui components and base primitives (Skeleton, etc.). Any custom component with app-specific logic or markup belongs directly under `components/` as its own folder or file.
+**Before writing any UI, always check `components/ui/` first — never build a raw `<button>`, `<input>`, or `<dialog>` when a shadcn component exists.**
 
-Custom components that are folder-based follow this pattern:
+To add more shadcn components:
+```sh
+cd apps/web && pnpm dlx shadcn@latest add <component-name>
 ```
-components/NoteCard/
-├── index.tsx          # default export: the component
-├── index.test.tsx
-├── NoteCardSkeleton.tsx   # named sibling: skeleton variant
-└── NoteCardError.tsx      # named sibling: error variant
-```
-
-**Before writing any Tailwind classes or UI elements, always read these two files first — in this order:**
-1. `app/globals.css` — color tokens (`cream`, `brown`, `salmon`, `yellow-soft`, `teal-soft`, `olive-soft`), font families (`font-linter`, `font-inria-serif`), typography utility classes (`.page-heading`, `.body-text`, `.note-title`, etc.), and shadcn CSS variable mappings (`--background`, `--foreground`, `--primary`, `--border`, etc.)
-2. `components/ui/` — all available primitives. Never build a new primitive if one already exists here.
 
 **Hard rules:**
-- Never use hardcoded hex colors — always use named design tokens (`text-brown`) or shadcn semantic tokens (`text-foreground`, `border-input`)
-- Never put a custom component in `components/ui/` — shadcn components and base primitives only
-- Never define typography styles inline if a utility class already exists in `globals.css`
+- Never use hardcoded hex colors — use named Tailwind color utilities (`text-brown`, `bg-coral`, `text-teal/75`) or semantic tokens (`text-foreground`, `border-input`). Never write `text-[var(--color-*)]` — the short form works because the tokens are registered in `@theme inline` in `globals.css`.
+- Never put custom components in `components/ui/` — shadcn only
+- Nook color utilities: `brown`, `coral`, `cream`, `teal` — all support opacity modifier (e.g. `text-brown/75`)
+- Font utilities: `font-quicksand` (headings + brand), `font-figtree` (body — rarely needed, `body` sets it globally). Never use `font-[family-name:var(--font-*)]`.
 
 ```tsx
 // components/ui/Button.tsx
