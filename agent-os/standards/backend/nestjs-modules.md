@@ -1,9 +1,9 @@
 # NestJS Module Structure
 
-All feature modules live under `src/modules/<name>/` with this layout:
+All feature modules live under `src/<name>/` with this layout:
 
 ```
-src/modules/<name>/
+src/<name>/
 ├── <name>.module.ts
 ├── <name>.service.ts
 ├── <name>.controller.ts

@@ -1,6 +1,8 @@
 # Agent OS Standards Index
 
 backend:
+  error-handling:
+    description: GlobalExceptionFilter shape, which HttpException subclass to throw, what not to expose
   nestjs-modules:
     description: Feature module layout, DTO validation, guards, and Swagger conventions
 

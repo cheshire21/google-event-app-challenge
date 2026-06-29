@@ -39,11 +39,11 @@ These files are the source of truth. Every rule in them is mandatory — no exce
 
 ## Non-negotiable rules
 
-- **Feature modules only** — every new feature lives in `src/modules/<feature>/` with its own controller, service, and module file
+- **Feature modules only** — every new feature lives in `src/<feature>/` with its own controller, service, and module file
 - **`@/` path alias** — never use relative paths like `../../shared`; always use `@/shared/...`
 - **`PrismaService` only** — never use raw SQL or any ORM other than Prisma
 - **DTOs with `class-validator`** — every request body has a DTO decorated with `@ApiProperty`, `@IsString()`, etc.
-- **Services throw NestJS exceptions** — `NotFoundException`, `ConflictException`, etc. — never throw plain errors
+- **Services throw NestJS exceptions** — `NotFoundException`, `ConflictException`, `UnauthorizedException`, etc. — never throw plain `Error`; `GlobalExceptionFilter` in `src/shared/filters/http-exception.filter.ts` handles the response shape
 - **`ParseUUIDPipe` on all `:id` params** — never accept raw strings for UUID params
 - **`DELETE` returns 204** — always use `@HttpCode(HttpStatus.NO_CONTENT)` on delete endpoints
 - **`ConfigService.getOrThrow`** — never use `process.env` inside modules

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { envValidationSchema } from './config/env.validation';
+import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 
 @Module({
@@ -13,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
       expandVariables: true,
     }),
     SharedModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

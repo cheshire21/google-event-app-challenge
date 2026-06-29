@@ -7,17 +7,18 @@ apps/api/src/
 ├── config/
 │   └── env.validation.ts              # Joi env schema
 ├── shared/                            # @Global() infrastructure
+│   ├── filters/
+│   │   └── http-exception.filter.ts   # GlobalExceptionFilter (registered in main.ts)
 │   ├── prisma/
 │   │   ├── prisma.service.ts
 │   │   └── prisma.module.ts
 │   └── shared.module.ts
-├── modules/                           # Feature modules
-│   └── <feature>/
-│       ├── dto/
-│       ├── entities/
-│       ├── <feature>.controller.ts
-│       ├── <feature>.service.ts
-│       └── <feature>.module.ts
+├── <feature>/                         # Feature modules (one folder per feature)
+│   ├── dto/
+│   ├── entities/
+│   ├── <feature>.controller.ts
+│   ├── <feature>.service.ts
+│   └── <feature>.module.ts
 ├── app.module.ts
 └── main.ts
 ```
@@ -36,7 +37,7 @@ apps/api/src/
 
 ## Checklist: New Feature Module
 
-1. Create `src/modules/<feature>/` with `dto/` and `entities/` subdirs
+1. Create `src/<feature>/` with `dto/` and `entities/` subdirs
 2. Entity class (mirrors Prisma model, used for Swagger response typing)
 3. DTOs with `class-validator` + `@ApiProperty`
 4. Service — inject `PrismaService`, throw correct exceptions
@@ -50,6 +51,6 @@ apps/api/src/
 
 - `src/shared/shared.module.ts` — add new global services here
 - `src/app.module.ts` — register feature modules here
-- `src/main.ts` — global prefix `/api`, ValidationPipe, CORS, Swagger at `/docs`
+- `src/main.ts` — global prefix `/api`, `GlobalExceptionFilter`, `ValidationPipe`, CORS, Swagger at `/docs`
 - `src/config/env.validation.ts` — Joi env schema; update when adding env vars
 - `prisma/schema.prisma` — run `pnpm --filter=api prisma:migrate` after model changes
