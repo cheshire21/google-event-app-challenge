@@ -1,0 +1,55 @@
+# NestJS Architecture
+
+## Folder Structure
+
+```
+apps/api/src/
+├── config/
+│   └── env.validation.ts              # Joi env schema
+├── shared/                            # @Global() infrastructure
+│   ├── prisma/
+│   │   ├── prisma.service.ts
+│   │   └── prisma.module.ts
+│   └── shared.module.ts
+├── modules/                           # Feature modules
+│   └── <feature>/
+│       ├── dto/
+│       ├── entities/
+│       ├── <feature>.controller.ts
+│       ├── <feature>.service.ts
+│       └── <feature>.module.ts
+├── app.module.ts
+└── main.ts
+```
+
+---
+
+## Module Organization Rules
+
+- `SharedModule` is `@Global()` — feature modules never import it directly, they just inject its services
+- `AppModule` imports only: `ConfigModule`, `SharedModule`, and feature modules
+- Feature modules are self-contained: controller + service + module file, nothing else at the module level
+- Use `@/` path alias instead of relative paths (`@/shared/prisma/prisma.service`)
+- Every new env var goes in: `env.validation.ts` (Joi schema) + `.env` + `.env.example`
+
+---
+
+## Checklist: New Feature Module
+
+1. Create `src/modules/<feature>/` with `dto/` and `entities/` subdirs
+2. Entity class (mirrors Prisma model, used for Swagger response typing)
+3. DTOs with `class-validator` + `@ApiProperty`
+4. Service — inject `PrismaService`, throw correct exceptions
+5. Controller — thin, correct HTTP codes, `ParseUUIDPipe` on `:id`
+6. Module file
+7. Register in `AppModule`
+
+---
+
+## Key Files
+
+- `src/shared/shared.module.ts` — add new global services here
+- `src/app.module.ts` — register feature modules here
+- `src/main.ts` — global prefix `/api`, ValidationPipe, CORS, Swagger at `/docs`
+- `src/config/env.validation.ts` — Joi env schema; update when adding env vars
+- `prisma/schema.prisma` — run `pnpm --filter=api prisma:migrate` after model changes
