@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Quicksand, Figtree } from "next/font/google";
 import React from "react";
 import "./globals.css";
+import Providers from "./providers";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -37,7 +38,7 @@ const RootLayout = ({
         />
       </head>
       <body className={`${figtree.variable} ${quicksand.variable}`}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
