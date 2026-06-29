@@ -262,6 +262,78 @@ const AuthLayout = ({ children }) => (
 
 ---
 
+## Pagination & Infinite Scroll
+
+All list endpoints return `{ data: T[], meta: { total, page, limit, totalPages } }`. On the frontend, lists use **`useInfiniteQuery`** + an **intersection observer sentinel** for infinite scroll — never manual "Load more" buttons.
+
+### API function
+```ts
+// features/bookings/api.ts
+export interface PageMeta { total: number; page: number; limit: number; totalPages: number; }
+export interface PagedResponse<T> { data: T[]; meta: PageMeta; }
+
+export const getBookings = (page = 1, limit = 20): Promise<PagedResponse<Booking>> =>
+  api.get<PagedResponse<Booking>>('/bookings', { params: { page, limit } }).then(r => r.data);
+```
+
+### Hook
+```ts
+// features/bookings/hooks/useBookings.ts
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { getBookings } from '../api';
+
+export const useBookings = () =>
+  useInfiniteQuery({
+    queryKey: ['bookings'],
+    queryFn: ({ pageParam = 1 }) => getBookings(pageParam),
+    getNextPageParam: (last) => last.meta.page < last.meta.totalPages ? last.meta.page + 1 : undefined,
+    initialPageParam: 1,
+  });
+```
+
+### Scroll sentinel (shared hook — `hooks/useIntersectionObserver.ts`)
+```ts
+import { useEffect, useRef } from 'react';
+
+export const useIntersectionObserver = (onIntersect: () => void, enabled = true) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!enabled || !ref.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) onIntersect();
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [enabled, onIntersect]);
+  return ref;
+};
+```
+
+### List component pattern
+```tsx
+const BookingsList = () => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useBookings();
+  const sentinelRef = useIntersectionObserver(fetchNextPage, hasNextPage);
+
+  const bookings = data?.pages.flatMap(p => p.data) ?? [];
+
+  return (
+    <>
+      {bookings.map(b => <BookingCard key={b.id} booking={b} />)}
+      <div ref={sentinelRef} className="h-4" />
+      {isFetchingNextPage && <Skeleton />}
+    </>
+  );
+};
+```
+
+**Rules:**
+- Always use `useInfiniteQuery` for list endpoints — never `useQuery` with manual page state
+- Flatten pages with `data?.pages.flatMap(p => p.data) ?? []`
+- The sentinel `<div>` must be the last element in the scroll container
+
+---
+
 ## Dependency Rules
 
 Dependencies only flow **downward**. Features never import from other features.

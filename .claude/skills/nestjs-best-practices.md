@@ -18,6 +18,79 @@
 
 ---
 
+## Pagination
+
+All list endpoints use **page-based pagination** via `PaginationQueryDto`. The response is always wrapped in `PagedResponseDto<T>`.
+
+### `PaginationQueryDto` (shared, lives in `src/shared/dto/pagination-query.dto.ts`)
+```ts
+import { Type } from 'class-transformer';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
+
+export class PaginationQueryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit: number = 20;
+}
+```
+
+### `PagedResponseDto<T>` (shared, lives in `src/shared/dto/paged-response.dto.ts`)
+```ts
+export class PageMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export class PagedResponseDto<T> {
+  data: T[];
+  meta: PageMeta;
+}
+```
+
+### Service pattern
+```ts
+async findAll(userId: string, { page, limit }: PaginationQueryDto): Promise<PagedResponseDto<FeatureResponseDto>> {
+  const [items, total] = await Promise.all([
+    this.prisma.feature.findMany({
+      where: { userId },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+    }),
+    this.prisma.feature.count({ where: { userId } }),
+  ]);
+  return {
+    data: plainToInstance(FeatureResponseDto, items, { excludeExtraneousValues: true }),
+    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+  };
+}
+```
+
+### Controller pattern
+```ts
+@Get()
+@ApiOkResponse({ description: 'Paginated list' })
+findAll(
+  @CurrentUser() { userId }: CurrentUserDto,
+  @Query() query: PaginationQueryDto,
+) {
+  return this.featureService.findAll(userId, query);
+}
+```
+
+---
+
 ## Templates
 
 ### Input DTO (request body)
@@ -73,30 +146,30 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '@/shared/prisma/prisma.service';
 
-const toDto = (data: unknown) =>
-  plainToInstance(<Feature>ResponseDto, data, { excludeExtraneousValues: true });
-
 @Injectable()
 export class <Feature>Service {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll() {
-    return toDto(await this.prisma.<feature>.findMany());
+    const records = await this.prisma.<feature>.findMany();
+    return plainToInstance(<Feature>ResponseDto, records, { excludeExtraneousValues: true });
   }
 
   async findOne(id: string) {
     const record = await this.prisma.<feature>.findUnique({ where: { id } });
     if (!record) throw new NotFoundException(`<Feature> ${id} not found`);
-    return toDto(record);
+    return plainToInstance(<Feature>ResponseDto, record, { excludeExtraneousValues: true });
   }
 
   async create(dto: Create<Feature>Dto) {
-    return toDto(await this.prisma.<feature>.create({ data: dto }));
+    const record = await this.prisma.<feature>.create({ data: dto });
+    return plainToInstance(<Feature>ResponseDto, record, { excludeExtraneousValues: true });
   }
 
   async update(id: string, dto: Update<Feature>Dto) {
     await this.findOne(id);
-    return toDto(await this.prisma.<feature>.update({ where: { id }, data: dto }));
+    const record = await this.prisma.<feature>.update({ where: { id }, data: dto });
+    return plainToInstance(<Feature>ResponseDto, record, { excludeExtraneousValues: true });
   }
 
   async remove(id: string) {
