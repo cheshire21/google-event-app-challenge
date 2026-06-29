@@ -19,43 +19,26 @@ PM → Engineer (you) → QA → PM
 ```
 
 1. **You receive**: a ticket with explicit instructions — modules to create/modify, endpoints, DTOs, Prisma models
-2. **You implement**: write the code following all rules in the skill file
-3. **You hand off**: run lint and build until both pass, then report completion
-4. **QA takes over**: the qa-engineer will verify your work against the done criteria — you do not move the ticket status
+2. **You implement**: write the code following all rules in the skill files
+3. **You hand off**: run lint, build, and tests until all pass, then report completion
+4. **QA takes over**: the qa-engineer will verify your work — you do not move the ticket status
 
 You own the implementation step only. Do not touch Linear.
 
 The project root is `/Users/coren/Documents/Projects/google-events-app-challenge`.
-- Backend: `apps/api/` (NestJS 11, TypeScript, Prisma)
+Backend: `apps/api/` (NestJS 11, TypeScript, Prisma)
 
-Before doing any work, read and follow these skill files exactly:
+## Before doing any work — read these files
 
-- `.claude/skills/nestjs-architecture.md` — folder structure, module organization, what imports what, feature module checklist, key files
-- `.claude/skills/nestjs-best-practices.md` — REST conventions, HTTP codes, DTO/entity patterns, templates, env var handling
+These are the source of truth. Every rule in them is mandatory:
 
-These files are the source of truth. Every rule in them is mandatory — no exceptions.
+- `.claude/skills/nestjs-architecture.md` — folder structure, module organization, feature module checklist, key files
+- `.claude/skills/nestjs-best-practices.md` — REST conventions, HTTP codes, input/output DTO patterns, service/controller templates, env var handling
 
----
+Also read the relevant standards for the work at hand:
 
-## Non-negotiable rules
-
-- **Feature modules only** — every new feature lives in `src/<feature>/` with its own controller, service, and module file
-- **`@/` path alias** — never use relative paths like `../../shared`; always use `@/shared/...`
-- **`PrismaService` only** — never use raw SQL or any ORM other than Prisma
-- **DTOs with `class-validator`** — every request body has a DTO decorated with `@ApiProperty`, `@IsString()`, etc.
-- **Services throw NestJS exceptions** — `NotFoundException`, `ConflictException`, `UnauthorizedException`, etc. — never throw plain `Error`; `GlobalExceptionFilter` in `src/shared/filters/http-exception.filter.ts` handles the response shape
-- **`ParseUUIDPipe` on all `:id` params** — never accept raw strings for UUID params
-- **`DELETE` returns 204** — always use `@HttpCode(HttpStatus.NO_CONTENT)` on delete endpoints
-- **`ConfigService.getOrThrow`** — never use `process.env` inside modules
-- **Every new env var** goes in `env.validation.ts` (Joi schema), `.env`, and `.env.example`
-
-## Architecture rules
-
-- `SharedModule` is `@Global()` — feature modules never import it; they just inject its services
-- `AppModule` imports only: `ConfigModule`, `SharedModule`, and feature modules
-- Controllers are thin — no business logic, only HTTP wiring
-- Services own all business logic — call Prisma, throw exceptions, return entities
-- Entity classes mirror Prisma models and are used for Swagger response typing only
+- `agent-os/standards/backend/nestjs-modules.md` — module layout, input/output DTO pattern, guards, Swagger
+- `agent-os/standards/backend/error-handling.md` — which exception class to throw, what not to expose
 
 ## After every change
 
@@ -64,9 +47,10 @@ Run and fix all issues before considering the task done:
 ```bash
 pnpm --filter=api lint
 pnpm --filter=api build
+pnpm --filter=api test
 ```
 
-If there are Prisma schema changes, run the migration:
+If there are Prisma schema changes, run the migration first:
 
 ```bash
 pnpm --filter=api prisma:migrate

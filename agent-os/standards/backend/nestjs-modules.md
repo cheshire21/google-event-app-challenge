@@ -7,11 +7,10 @@ src/<name>/
 ├── <name>.module.ts
 ├── <name>.service.ts
 ├── <name>.controller.ts
-├── dto/
-│   ├── create-<name>.dto.ts
-│   └── update-<name>.dto.ts
-└── entities/
-    └── <name>.entity.ts
+└── dto/
+    ├── create-<name>.dto.ts      — input: class-validator decorators
+    ├── update-<name>.dto.ts      — input: PartialType(CreateDto)
+    └── <name>-response.dto.ts    — output: @Exclude() + @Expose() + @ApiProperty()
 ```
 
 - Always use the full subfolder structure — even for simple modules
@@ -20,18 +19,20 @@ src/<name>/
 
 ## DTOs
 
-Use `class-validator` decorators only. The global `ValidationPipe` is configured with `{ whitelist: true, transform: true }`.
+Every feature has two DTO categories in `dto/`:
+
+### Input DTOs — request validation
+
+Use `class-validator` decorators. The global `ValidationPipe` is configured with `{ whitelist: true, transform: true }`.
 
 ```ts
 export class CreateBookingDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString() 
+  @IsNotEmpty() 
   title: string;
-
-  @IsDateString()
+  @IsDateString() 
   startTime: string;
-
-  @IsDateString()
+  @IsDateString() 
   endTime: string;
 }
 ```
@@ -39,6 +40,43 @@ export class CreateBookingDto {
 - `whitelist: true` strips unknown fields automatically
 - `transform: true` coerces types (e.g. string → Date)
 - Use `PartialType(CreateXDto)` for update DTOs
+
+### Output DTOs — response shape
+
+Use `class-transformer` `@Exclude()` + `@Expose()`. Services return these via `plainToInstance`.
+
+```ts
+@Exclude()
+export class BookingResponseDto {
+  @Expose()
+  @ApiProperty()
+  id: string;
+  
+  @Expose()
+  @ApiProperty()
+  title: string;
+  
+  @Expose()
+  @ApiProperty()
+  startTime: Date;
+  
+  @Expose()
+  @ApiProperty()
+  endTime: Date;
+  
+  // sensitive/internal fields omitted — not decorated with @Expose()
+}
+```
+
+Services always wrap Prisma results:
+
+```ts
+return plainToInstance(BookingResponseDto, prismaResult, { excludeExtraneousValues: true });
+```
+
+- `excludeExtraneousValues: true` ensures only `@Expose()` fields appear in the response
+- Never return raw Prisma objects from a service — always `plainToInstance`
+- Controllers use the response DTO for `@ApiOkResponse({ type: XResponseDto })`
 
 ## Guards
 

@@ -37,10 +37,10 @@ apps/api/src/
 
 ## Checklist: New Feature Module
 
-1. Create `src/<feature>/` with `dto/` and `entities/` subdirs
-2. Entity class (mirrors Prisma model, used for Swagger response typing)
-3. DTOs with `class-validator` + `@ApiProperty`
-4. Service — inject `PrismaService`, throw correct exceptions
+1. Create `src/<feature>/` with `dto/` subdir
+2. Input DTO(s) — `class-validator` decorators + `@ApiProperty()`
+3. Output DTO — `@Exclude()` class + `@Expose()` on each public field + `@ApiProperty()`
+4. Service — inject `PrismaService`, return `plainToInstance(XResponseDto, result, { excludeExtraneousValues: true })`, throw correct exceptions
 5. Controller — thin, correct HTTP codes, `ParseUUIDPipe` on `:id`
 6. Module file
 7. Register in `AppModule`

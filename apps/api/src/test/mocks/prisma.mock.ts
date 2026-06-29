@@ -1,5 +1,3 @@
-import type { PrismaService } from '../../shared/prisma/prisma.service';
-
 const mockModel = () => ({
   findMany: jest.fn(),
   findUnique: jest.fn(),
