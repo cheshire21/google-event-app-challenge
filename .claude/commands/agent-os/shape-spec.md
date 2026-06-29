@@ -124,12 +124,12 @@ Example: `2026-01-15-1430-user-comment-system/`
 
 ### Step 7: Structure the Plan
 
-Now build the plan with **Task 1 always being "Save spec documentation"**.
+Now build the plan with **Task 1 always being "Save spec documentation"**. Each subsequent implementation task follows the **PM → Engineer → QA → PM pipeline**.
 
 Present this structure to the user:
 
 ```
-Here's the plan structure. Task 1 saves all our shaping work before implementation begins.
+Here's the plan structure. Task 1 saves our shaping work. Each implementation task then runs through the full agent pipeline.
 
 ---
 
@@ -145,9 +145,19 @@ Create `agent-os/specs/{folder-name}/` with:
 
 ## Task 2: [First implementation task]
 
-[Description based on the feature]
+**Pipeline:**
+1. 🗂 PM — Find Linear ticket for this task; assign to `coren`; move to In Progress
+2. 🔨 Engineer (nestjs-engineer / nextjs-engineer) — Implement the task per the ticket spec
+3. ✅ QA — Verify every "Done when" criterion from the ticket against the actual code
+4. 🗂 PM — Move ticket to Done
+
+[Description of what gets built]
 
 ## Task 3: [Next task]
+
+**Pipeline:** (same 4-step sequence)
+
+[Description of what gets built]
 
 ...
 
@@ -163,6 +173,11 @@ After Task 1 is confirmed, continue building out the remaining implementation ta
 - Patterns from reference implementations (Step 3)
 - Constraints from standards (Step 5)
 
+For each task include:
+- Which engineer agent handles it: **nestjs-engineer** for BE tasks, **nextjs-engineer** for FE tasks
+- The Linear ticket ID (e.g. GOO-5) if known, so PM can find it
+- The specific "Done when" criteria so QA knows what to verify
+
 Each task should be specific and actionable.
 
 ### Step 9: Ready for Execution
@@ -172,8 +187,12 @@ When the full plan is ready:
 ```
 Plan complete. When you approve and execute:
 
-1. Task 1 will save all spec documentation first
-2. Then implementation tasks will proceed
+1. Task 1 saves all spec documentation
+2. Each implementation task runs through the pipeline:
+   - PM assigns ticket to coren + moves to In Progress
+   - Engineer implements
+   - QA verifies done criteria
+   - PM moves to Done
 
 Ready to start? (approve / adjust)
 ```
@@ -259,9 +278,38 @@ The following standards apply to this work.
 ...
 ```
 
+## Execution Pipeline
+
+Every implementation task (Task 2+) runs through this 4-agent pipeline in order:
+
+### 1. PM agent (start)
+- Find the Linear ticket matching the task (by title or ID)
+- Assign the ticket to `coren`
+- Move ticket status → **In Progress**
+
+### 2. Engineer agent (implement)
+- **nestjs-engineer** for all BE tasks (NestJS modules, Prisma, DTOs, tests)
+- **nextjs-engineer** for all FE tasks (pages, components, hooks, styles, tests)
+- Implement everything specified in the ticket description
+- Run lint + build + tests to confirm they pass
+
+### 3. QA engineer agent (verify)
+- Read the "Done when" criteria from the Linear ticket
+- Inspect the actual code (no running servers needed — static analysis is fine)
+- Check off each criterion that passes; report any that fail
+- Do NOT move ticket status — that is PM's responsibility
+
+### 4. PM agent (close)
+- Review QA's report
+- If all criteria pass → move ticket status → **Done**
+- If criteria fail → leave In Progress and report blockers back
+
+---
+
 ## Tips
 
 - **Keep shaping fast** — Don't over-document. Capture enough to start, refine as you build.
 - **Visuals are optional** — Not every feature needs mockups.
 - **Standards guide, not dictate** — They inform the plan but aren't always mandatory.
 - **Specs are discoverable** — Months later, someone can find this spec and understand what was built and why.
+- **Pipeline is mandatory** — Every task must go through all 4 steps; never skip PM or QA.

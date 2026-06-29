@@ -1,2 +1,23 @@
 # Agent OS Standards Index
 
+backend:
+  nestjs-modules:
+    description: Feature module layout, DTO validation, guards, and Swagger conventions
+
+frontend:
+  component-architecture:
+    description: features/ vs components/ split, RSC vs client rules, cn() usage, shadcn/ui location
+  fonts-icons:
+    description: Quicksand/Figtree font loading, CSS variables, Material Symbols Rounded usage
+  tailwind-tokens:
+    description: Nook color palette, @theme inline pattern, no arbitrary hex values rule
+  testing:
+    description: Vitest + RTL setup, colocated spec files, QueryClientProvider wrapper pattern
+
+database:
+  prisma:
+    description: Model field order, UUID PKs, timestamps, cascade deletes, migration naming
+
+testing:
+  unit-tests:
+    description: Prisma mock setup, AbstractFactory pattern, and service test wiring
