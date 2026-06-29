@@ -10,6 +10,7 @@ import { SharedModule } from './shared/shared.module';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envValidationSchema,
+      expandVariables: true,
     }),
     SharedModule,
   ],
