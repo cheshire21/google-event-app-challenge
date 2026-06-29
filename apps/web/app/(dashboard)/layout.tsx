@@ -1,8 +1,11 @@
-import { type JSX, type ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
+import { AppShell } from "@/components/layout/AppShell";
 import { AuthGuard } from "@/features/auth/components/AuthGuard";
 
-const DashboardLayout = ({ children }: { children: ReactNode }): JSX.Element => {
-  return <AuthGuard requireAuth>{children}</AuthGuard>;
-};
+const DashboardLayout = ({ children }: { children: ReactNode }): JSX.Element => (
+  <AuthGuard requireAuth>
+    <AppShell>{children}</AppShell>
+  </AuthGuard>
+);
 
 export default DashboardLayout;
