@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
@@ -6,6 +6,8 @@ import { PrismaService } from '@/shared/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -60,5 +62,9 @@ export class AuthService {
     // Sign and return app JWT
     const accessToken = this.jwtService.sign({ sub: user.id });
     return { accessToken };
+  }
+
+  logout(userId: string): void {
+    this.logger.log(`User ${userId} logged out`);
   }
 }

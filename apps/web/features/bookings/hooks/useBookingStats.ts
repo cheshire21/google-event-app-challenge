@@ -7,10 +7,11 @@ export interface BookingStats {
   upcoming: number;
   thisWeek: number;
   googleSynced: number;
+  isLoading: boolean;
 }
 
 export const useBookingStats = (): BookingStats => {
-  const { data } = useBookings();
+  const { data, isLoading } = useBookings();
 
   const { startOfWeek, endOfWeek } = useMemo(() => {
     const now = new Date();
@@ -36,6 +37,7 @@ export const useBookingStats = (): BookingStats => {
         return t >= startOfWeek && t < endOfWeek;
       }).length,
       googleSynced: googleEvents?.length ?? 0,
+      isLoading,
     };
-  }, [data, googleEvents, startOfWeek, endOfWeek]);
+  }, [data, googleEvents, startOfWeek, endOfWeek, isLoading]);
 };

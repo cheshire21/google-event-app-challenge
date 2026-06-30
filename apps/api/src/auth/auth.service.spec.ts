@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { User } from '@prisma/client';
@@ -115,6 +115,15 @@ describe('AuthService', () => {
       await expect(service.exchangeToken(auth0AccessToken)).rejects.toThrow(
         UnauthorizedException,
       );
+    });
+  });
+
+  describe('logout', () => {
+    it('logs the userId', () => {
+      const logSpy = jest.spyOn(Logger.prototype, 'log').mockImplementation();
+      service.logout('user-123');
+      expect(logSpy).toHaveBeenCalledWith('User user-123 logged out');
+      logSpy.mockRestore();
     });
   });
 });

@@ -4,7 +4,7 @@ import type { JSX } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NewBookingDialog } from "@/features/bookings/components/NewBookingDialog";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useLogout } from "@/features/auth/hooks/useLogout";
 import { CalendarDays, LayoutDashboard, Link2, LogOut } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
@@ -26,11 +26,7 @@ const navItems: NavItem[] = [
 export const Sidebar = (): JSX.Element => {
   const pathname = usePathname();
   const { data: user } = useCurrentUser();
-  const { logout } = useAuth0();
-
-  const handleLogout = (): void => {
-    logout({ logoutParams: { returnTo: window.location.origin + "/login" } });
-  };
+  const { logout: handleLogout } = useLogout();
 
   return (
     <aside className="hidden md:flex flex-col w-60 sticky top-0 h-screen overflow-y-auto bg-cream border-r border-border">

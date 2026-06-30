@@ -4,9 +4,12 @@ import type { JSX } from "react";
 import { CalendarDays, Calendar, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useBookingStats } from "../../hooks/useBookingStats";
+import { StatsCardSkeleton } from "./StatsCardSkeleton";
 
 export const StatsCards = (): JSX.Element => {
-  const { upcoming, thisWeek, googleSynced } = useBookingStats();
+  const { upcoming, thisWeek, googleSynced, isLoading } = useBookingStats();
+
+  if (isLoading) return <StatsCardSkeleton />;
 
   return (
     <div className="grid grid-cols-3 gap-1.5 xs:gap-2 sm:gap-4">

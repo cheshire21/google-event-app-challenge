@@ -21,7 +21,7 @@ import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import { GoogleCalendarService } from './google-calendar.service';
 import { CalendarEventDto } from './dto/calendar-event.dto';
 
-@ApiTags('google')
+@ApiTags('google-calendar')
 @Controller('google')
 export class GoogleCalendarController {
   constructor(
