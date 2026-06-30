@@ -12,21 +12,40 @@ import {
 import { BookingForm } from "./BookingForm";
 import { useCreateBooking } from "../hooks/useCreateBooking";
 import type { CreateBookingPayload } from "../types";
+import type { BookingFormValues } from "../schemas/booking.schema";
 
 interface NewBookingDialogProps {
   trigger: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  initialValues?: Partial<BookingFormValues>;
 }
 
-export const NewBookingDialog = ({ trigger }: NewBookingDialogProps): JSX.Element => {
-  const [open, setOpen] = useState(false);
+export const NewBookingDialog = ({
+  trigger,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  initialValues,
+}: NewBookingDialogProps): JSX.Element => {
+  const [internalOpen, setInternalOpen] = useState(false);
   const { mutate, isPending } = useCreateBooking();
 
+  const isControlled = controlledOpen !== undefined;
+  const dialogOpen = isControlled ? controlledOpen : internalOpen;
+
+  const handleOpenChange = (value: boolean): void => {
+    if (!isControlled) setInternalOpen(value);
+    controlledOnOpenChange?.(value);
+  };
+
   const handleSubmit = (payload: CreateBookingPayload): void => {
-    mutate(payload, { onSuccess: () => setOpen(false) });
+    mutate(payload, {
+      onSuccess: () => handleOpenChange(false),
+    });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
@@ -35,9 +54,10 @@ export const NewBookingDialog = ({ trigger }: NewBookingDialogProps): JSX.Elemen
           </DialogTitle>
         </DialogHeader>
         <BookingForm
+          initialValues={initialValues}
           onSubmit={handleSubmit}
           isPending={isPending}
-          onCancel={() => setOpen(false)}
+          onCancel={() => handleOpenChange(false)}
         />
       </DialogContent>
     </Dialog>

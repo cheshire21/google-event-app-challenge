@@ -4,6 +4,13 @@ import type { AvailabilityResult, Booking, CreateBookingPayload, PagedBookings }
 export const getBookings = (page = 1, limit = 20): Promise<PagedBookings> =>
   api.get<PagedBookings>("/bookings", { params: { page, limit } }).then((r) => r.data);
 
+export const getBookingsByDateRange = (start: string, end: string): Promise<Booking[]> =>
+  api
+    .get<{ data: Booking[]; meta: unknown }>("/bookings", {
+      params: { startFrom: start, startTo: end, limit: 100 },
+    })
+    .then((r) => r.data.data);
+
 export const checkAvailability = (
   start: string,
   end: string,

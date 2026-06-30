@@ -1,5 +1,8 @@
 import type { Booking } from "./types";
 import type { BookingFormValues } from "./schemas/booking.schema";
+import { toLocalISODate, getMondayOfWeek, getWeekDays } from "@/utils/date";
+
+export { toLocalISODate, getMondayOfWeek, getWeekDays };
 
 export const bookingToFormValues = (booking: Booking): BookingFormValues => ({
   title: booking.title,
@@ -33,29 +36,8 @@ export const formatDuration = (start: string, end: string): string => {
   return m ? `${h}h ${m}m` : `${h}h`;
 };
 
-export const toLocalISODate = (date: Date): string =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
 export const buildISODateTime = (dateStr: string, time: string): string =>
   `${dateStr}T${time}:00`;
-
-export const getMondayOfWeek = (date: Date): Date => {
-  const d = new Date(date);
-  const dow = d.getDay();
-  d.setDate(d.getDate() - ((dow + 6) % 7));
-  d.setHours(0, 0, 0, 0);
-  return d;
-};
-
-export const getWeekDays = (anchor: Date): Date[] => {
-  const days: Date[] = [];
-  const d = getMondayOfWeek(anchor);
-  for (let i = 0; i < 7; i++) {
-    days.push(new Date(d));
-    d.setDate(d.getDate() + 1);
-  }
-  return days;
-};
 
 export const getGreeting = (): string => {
   const hour = new Date().getHours();
