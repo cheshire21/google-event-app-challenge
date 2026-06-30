@@ -11,9 +11,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useDeleteBooking } from "../hooks/useDeleteBooking";
-import { formatTime } from "../utils";
-import type { Booking } from "../types";
+import { useDeleteBooking } from "../../hooks/useDeleteBooking";
+import { formatTime } from "../../utils";
+import type { Booking } from "../../types";
 
 interface CancelConfirmDialogProps {
   booking: Booking;

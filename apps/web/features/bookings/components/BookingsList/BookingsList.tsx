@@ -3,9 +3,9 @@
 import type { JSX } from "react";
 import type React from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import type { FeedItem } from "../types";
-import { FeedItemCard } from "./FeedItemCard";
-import { EmptyState } from "./EmptyState";
+import type { FeedItem } from "../../types";
+import { FeedItemCard } from "../FeedItemCard";
+import { EmptyState } from "../EmptyState";
 import { BookingCardSkeleton, BookingListSkeleton } from "./BookingSkeletons";
 
 interface BookingsListProps {

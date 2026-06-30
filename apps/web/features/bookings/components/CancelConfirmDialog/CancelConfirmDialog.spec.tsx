@@ -4,11 +4,11 @@ import { describe, expect, it, vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { CancelConfirmDialog } from "./CancelConfirmDialog";
-import type { Booking } from "../types";
+import type { Booking } from "../../types";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
 
-vi.mock("../hooks/useDeleteBooking", () => ({
+vi.mock("../../hooks/useDeleteBooking", () => ({
   useDeleteBooking: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
@@ -59,7 +59,7 @@ describe("CancelConfirmDialog", () => {
   });
 
   it("calls mutate when Cancel booking is clicked", async () => {
-    const { useDeleteBooking } = await import("../hooks/useDeleteBooking");
+    const { useDeleteBooking } = await import("../../hooks/useDeleteBooking");
     const mockMutate = vi.fn();
     vi.mocked(useDeleteBooking).mockReturnValue({
       mutate: mockMutate,

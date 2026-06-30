@@ -19,12 +19,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useDebounce } from "@/hooks/useDebounce";
-import { bookingSchema, type BookingFormValues } from "../schemas/booking.schema";
-import { useCheckAvailability } from "../hooks/useCheckAvailability";
-import { toLocalISODate, buildISODateTime } from "../utils";
-import { ConflictWarning } from "./ConflictWarning";
-import { AvailableConfirmation } from "./AvailableConfirmation";
-import type { CreateBookingPayload } from "../types";
+import { bookingSchema, type BookingFormValues } from "../../schemas/booking.schema";
+import { useCheckAvailability } from "../../hooks/useCheckAvailability";
+import { toLocalISODate, buildISODateTime } from "../../utils";
+import { ConflictWarning } from "../ConflictWarning";
+import { AvailableConfirmation } from "../AvailableConfirmation";
+import type { CreateBookingPayload } from "../../types";
 
 interface BookingFormProps {
   initialValues?: Partial<BookingFormValues>;

@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 import { CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NewBookingDialog } from "./NewBookingDialog";
+import { NewBookingDialog } from "../NewBookingDialog";
 
 export const EmptyState = (): JSX.Element => (
   <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed py-16 text-center">

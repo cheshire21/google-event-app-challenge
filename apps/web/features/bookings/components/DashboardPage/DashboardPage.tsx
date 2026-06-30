@@ -3,10 +3,10 @@
 import type { JSX } from "react";
 import { useRef } from "react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
-import { useFeed } from "../hooks/useFeed";
-import { getGreeting, getDateLabel } from "../utils";
-import { StatsCards } from "./StatsCards";
-import { BookingsList } from "./BookingsList";
+import { useFeed } from "../../hooks/useFeed";
+import { getGreeting, getDateLabel } from "../../utils";
+import { StatsCards } from "../StatsCards";
+import { BookingsList } from "../BookingsList";
 
 export const DashboardPage = (): JSX.Element => {
   const { data: user } = useCurrentUser();

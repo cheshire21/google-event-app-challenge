@@ -3,10 +3,10 @@
 import type { JSX } from "react";
 import { Lock, Clock, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Booking, FeedItem } from "../types";
-import { formatTime, formatDuration } from "../utils";
-import { EditBookingDialog } from "./EditBookingDialog";
-import { CancelConfirmDialog } from "./CancelConfirmDialog";
+import type { Booking, FeedItem } from "../../types";
+import { formatTime, formatDuration } from "../../utils";
+import { EditBookingDialog } from "../EditBookingDialog";
+import { CancelConfirmDialog } from "../CancelConfirmDialog";
 
 interface FeedItemCardProps {
   item: FeedItem;

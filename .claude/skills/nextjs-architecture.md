@@ -26,7 +26,10 @@ frontend/
 ├── components/                 # shared reusable UI
 │   ├── ui/                     # shadcn/ui components + base primitives: button, input, form, dialog, label, Skeleton
 │   ├── layout/                 # structural components: Sidebar, NotesArea
-│   └── <ComponentName>/        # custom global components: NoteCard, CategoryDropdown, Modal, PasswordInput
+│   └── <ComponentName>/        # custom global components — each in its own folder
+│       ├── ComponentName.tsx
+│       ├── ComponentName.spec.tsx
+│       └── index.ts
 ├── features/                   # feature logic
 │   ├── auth/
 │   │   ├── components/         # AuthGuard (route protection wrapper)
@@ -50,20 +53,58 @@ Each feature follows the same internal structure:
 ```
 features/
 ├── auth/
-│   ├── components/             # LoginForm, RegisterForm
-│   ├── hooks/                  # useLogin, useRegister, useAuth
-│   ├── schemas/                # register.schema.ts, login.schema.ts (zod schemas + inferred types)
-│   ├── api.ts                  # all API calls for this feature
-│   ├── types.ts                # User, LoginPayload, RegisterPayload
-│   └── utils.ts                # token helpers, validation
-└── notes/
-    ├── components/             # NoteCard, NoteList, NoteForm, CategoryBadge
-    ├── hooks/                  # useNotes, useCreateNote, useCategories
-    ├── schemas/                # note.schema.ts, category.schema.ts
-    ├── api.ts                  # all API calls for this feature
-    ├── types.ts                # Note, Category
-    └── utils.ts                # note formatting helpers
+│   ├── components/
+│   │   ├── AuthGuard/           # each component gets its own folder
+│   │   │   ├── AuthGuard.tsx
+│   │   │   ├── AuthGuard.spec.tsx
+│   │   │   └── index.ts
+│   │   └── SignInPage/
+│   │       ├── SignInPage.tsx
+│   │       ├── SignInPage.spec.tsx
+│   │       └── index.ts
+│   ├── hooks/                   # useLogin, useRegister, useAuth
+│   ├── schemas/                 # register.schema.ts, login.schema.ts (zod schemas + inferred types)
+│   ├── api.ts                   # all API calls for this feature
+│   ├── types.ts                 # User, LoginPayload, RegisterPayload
+│   └── utils.ts                 # token helpers, validation
+└── bookings/
+    ├── components/
+    │   ├── BookingForm/
+    │   │   ├── BookingForm.tsx
+    │   │   ├── BookingForm.spec.tsx
+    │   │   └── index.ts
+    │   ├── BookingsList/        # related files (skeletons, etc.) live inside the folder
+    │   │   ├── BookingsList.tsx
+    │   │   ├── BookingSkeletons.tsx
+    │   │   └── index.ts
+    │   └── ...
+    ├── hooks/                   # useBookings, useCreateBooking, useDeleteBooking
+    ├── schemas/                 # booking.schema.ts
+    ├── api.ts
+    ├── types.ts
+    └── utils.ts
 ```
+
+### Component folder rules
+
+- **One folder per component** — never flat `.tsx` files directly in `components/`
+- Each folder contains: `ComponentName.tsx`, `ComponentName.spec.tsx`, `index.ts`
+- Co-locate related files inside the same folder: skeletons, component-specific utils, sub-components only used by this component
+- `index.ts` only re-exports — no logic:
+  ```ts
+  export { BookingsList } from "./BookingsList";
+  export { BookingCardSkeleton, BookingListSkeleton } from "./BookingSkeletons";
+  ```
+- External imports resolve through `index.ts` via folder resolution:
+  ```ts
+  import { BookingsList } from "@/features/bookings/components/BookingsList";
+  ```
+- Cross-component imports use `../` (sibling folder):
+  ```ts
+  // inside BookingsList/BookingsList.tsx
+  import { FeedItemCard } from "../FeedItemCard";
+  import { EmptyState } from "../EmptyState";
+  ```
 
 ---
 

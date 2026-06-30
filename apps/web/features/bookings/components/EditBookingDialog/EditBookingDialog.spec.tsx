@@ -4,15 +4,15 @@ import { describe, expect, it, vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { EditBookingDialog } from "./EditBookingDialog";
-import { useCheckAvailability } from "../hooks/useCheckAvailability";
-import { useUpdateBooking } from "../hooks/useUpdateBooking";
-import type { Booking } from "../types";
+import { useCheckAvailability } from "../../hooks/useCheckAvailability";
+import { useUpdateBooking } from "../../hooks/useUpdateBooking";
+import type { Booking } from "../../types";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ back: vi.fn(), push: vi.fn() }) }));
-vi.mock("../hooks/useCheckAvailability", () => ({
+vi.mock("../../hooks/useCheckAvailability", () => ({
   useCheckAvailability: vi.fn().mockReturnValue({ data: undefined, isFetching: false }),
 }));
-vi.mock("../hooks/useUpdateBooking", () => ({
+vi.mock("../../hooks/useUpdateBooking", () => ({
   useUpdateBooking: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 

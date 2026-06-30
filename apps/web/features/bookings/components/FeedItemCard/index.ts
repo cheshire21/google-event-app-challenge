@@ -1,0 +1,1 @@
+export { FeedItemCard } from "./FeedItemCard";

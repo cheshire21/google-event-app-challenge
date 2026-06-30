@@ -2,8 +2,8 @@
 
 import type { JSX } from "react";
 import { AlertCircle } from "lucide-react";
-import type { ConflictEntry } from "../types";
-import { formatTime } from "../utils";
+import type { ConflictEntry } from "../../types";
+import { formatTime } from "../../utils";
 
 interface ConflictWarningProps {
   conflicts: ConflictEntry[];

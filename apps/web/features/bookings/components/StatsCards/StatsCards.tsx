@@ -3,7 +3,7 @@
 import type { JSX } from "react";
 import { CalendarDays, Calendar, RefreshCw } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { useBookingStats } from "../hooks/useBookingStats";
+import { useBookingStats } from "../../hooks/useBookingStats";
 
 export const StatsCards = (): JSX.Element => {
   const { upcoming, thisWeek, googleSynced } = useBookingStats();

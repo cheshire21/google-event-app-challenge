@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { BookingForm } from "./BookingForm";
-import { useCreateBooking } from "../hooks/useCreateBooking";
-import type { CreateBookingPayload } from "../types";
-import type { BookingFormValues } from "../schemas/booking.schema";
+import { BookingForm } from "../BookingForm";
+import { useCreateBooking } from "../../hooks/useCreateBooking";
+import type { CreateBookingPayload } from "../../types";
+import type { BookingFormValues } from "../../schemas/booking.schema";
 
 interface NewBookingDialogProps {
   trigger: ReactNode;

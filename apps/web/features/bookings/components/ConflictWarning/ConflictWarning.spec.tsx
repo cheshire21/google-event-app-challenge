@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { ConflictWarning } from "./ConflictWarning";
-import type { ConflictEntry } from "../types";
+import type { ConflictEntry } from "../../types";
 
 describe("ConflictWarning", () => {
   const mockConflict: ConflictEntry = {

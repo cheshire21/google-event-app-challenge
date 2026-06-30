@@ -9,10 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { BookingForm } from "./BookingForm";
-import { useUpdateBooking } from "../hooks/useUpdateBooking";
-import { bookingToFormValues } from "../utils";
-import type { Booking, CreateBookingPayload } from "../types";
+import { BookingForm } from "../BookingForm";
+import { useUpdateBooking } from "../../hooks/useUpdateBooking";
+import { bookingToFormValues } from "../../utils";
+import type { Booking, CreateBookingPayload } from "../../types";
 
 interface EditBookingDialogProps {
   booking: Booking;

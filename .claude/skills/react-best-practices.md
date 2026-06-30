@@ -538,17 +538,24 @@ it("handles login failure", async () => {
 
 ### Test file location and naming
 
-- Co-locate tests next to the file: `hooks/useLogin.ts` → `hooks/useLogin.test.ts`
+- **Components**: spec lives inside the component folder alongside the source file
+- **Hooks / utils / api**: spec lives next to the file it tests (same directory)
+- Use `.spec.tsx` for components, `.spec.ts` for hooks/utils/api
 - One `describe` block per file, one `it` per behaviour
 - Describe block name = module name; `it` name = what it does in plain English
 
 ```
 features/auth/
 ├── api.ts
-├── api.test.ts
+├── api.spec.ts
 ├── hooks/
 │   ├── useLogin.ts
-│   ├── useLogin.test.ts
+│   └── useLogin.spec.ts
+└── components/
+    └── AuthGuard/
+        ├── AuthGuard.tsx
+        ├── AuthGuard.spec.tsx   ← co-located in the component folder
+        └── index.ts
 ```
 
 ---

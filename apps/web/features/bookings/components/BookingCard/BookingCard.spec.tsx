@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { Booking } from "../types";
+import type { Booking } from "../../types";
 import { BookingCard } from "./BookingCard";
 
-vi.mock("../hooks/useUpdateBooking", () => ({
+vi.mock("../../hooks/useUpdateBooking", () => ({
   useUpdateBooking: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
-vi.mock("../hooks/useDeleteBooking", () => ({
+vi.mock("../../hooks/useDeleteBooking", () => ({
   useDeleteBooking: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 

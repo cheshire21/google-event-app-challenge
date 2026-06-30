@@ -3,10 +3,10 @@
 import type { JSX } from "react";
 import { Pencil, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Booking } from "../types";
-import { formatTime, formatDuration } from "../utils";
-import { EditBookingDialog } from "./EditBookingDialog";
-import { CancelConfirmDialog } from "./CancelConfirmDialog";
+import type { Booking } from "../../types";
+import { formatTime, formatDuration } from "../../utils";
+import { EditBookingDialog } from "../EditBookingDialog";
+import { CancelConfirmDialog } from "../CancelConfirmDialog";
 
 interface BookingCardProps {
   booking: Booking;
