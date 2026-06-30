@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '@/shared/prisma/prisma.service';
 import { GoogleCalendarService } from '@/google-calendar/google-calendar.service';
@@ -72,6 +77,16 @@ export class BookingsService {
     userId: string,
     dto: CreateBookingDto,
   ): Promise<BookingResponseDto> {
+    const overlapping = await this.prisma.booking.findFirst({
+      where: {
+        userId,
+        startTime: { lt: new Date(dto.endTime) },
+        endTime: { gt: new Date(dto.startTime) },
+      },
+    });
+    if (overlapping) {
+      throw new ConflictException('Booking overlaps with an existing booking');
+    }
     const booking = await this.prisma.booking.create({
       data: { ...dto, userId },
     });

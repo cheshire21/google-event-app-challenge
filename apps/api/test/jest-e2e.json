@@ -5,5 +5,12 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!jose/|.+/node_modules/jose/)"
+  ],
+  "setupFiles": ["<rootDir>/setup-env.ts"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/../src/$1"
   }
 }

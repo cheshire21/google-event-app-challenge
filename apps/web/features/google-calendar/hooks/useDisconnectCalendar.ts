@@ -1,5 +1,6 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { disconnectGoogleCalendar } from "../api";
 
 export const useDisconnectCalendar = () => {
@@ -7,5 +8,6 @@ export const useDisconnectCalendar = () => {
   return useMutation({
     mutationFn: disconnectGoogleCalendar,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["currentUser"] }),
+    onError: () => toast.error("Failed to disconnect Google Calendar"),
   });
 };
