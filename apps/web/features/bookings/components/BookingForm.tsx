@@ -30,6 +30,7 @@ interface BookingFormProps {
   isPending: boolean;
   excludeId?: string;
   onCancel?: () => void;
+  submitLabel?: string;
 }
 
 export const BookingForm = ({
@@ -38,6 +39,7 @@ export const BookingForm = ({
   isPending,
   excludeId,
   onCancel,
+  submitLabel,
 }: BookingFormProps): JSX.Element => {
   const router = useRouter();
 
@@ -191,7 +193,7 @@ export const BookingForm = ({
             ) : (
               <>
                 <CheckCheck className="mr-2 h-4 w-4" />
-                Confirm booking
+                {submitLabel ?? "Confirm booking"}
               </>
             )}
           </Button>

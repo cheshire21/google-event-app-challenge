@@ -1,10 +1,11 @@
 "use client";
 
 import type { JSX } from "react";
-import { X, Clock } from "lucide-react";
+import { Pencil, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Booking } from "../types";
 import { formatTime, formatDuration } from "../utils";
+import { EditBookingDialog } from "./EditBookingDialog";
 
 interface BookingCardProps {
   booking: Booking;
@@ -47,6 +48,16 @@ export const BookingCard = ({
           </span>
         </div>
       </div>
+
+      {/* Edit button */}
+      <EditBookingDialog
+        booking={booking}
+        trigger={
+          <Button variant="ghost" size="icon" aria-label="Edit booking">
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+        }
+      />
 
       {/* Cancel button */}
       <Button variant="outline" size="sm" onClick={handleCancel}>

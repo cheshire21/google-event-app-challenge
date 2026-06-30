@@ -1,3 +1,21 @@
+import type { Booking } from "./types";
+import type { BookingFormValues } from "./schemas/booking.schema";
+
+export const bookingToFormValues = (booking: Booking): BookingFormValues => ({
+  title: booking.title,
+  date: new Date(booking.startTime),
+  startTime: new Date(booking.startTime).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }),
+  endTime: new Date(booking.endTime).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }),
+});
+
 export const formatTime = (iso: string): string =>
   new Date(iso)
     .toLocaleTimeString("en-US", {

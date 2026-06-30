@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from "vitest";
 import type { Booking } from "../types";
 import { BookingCard } from "./BookingCard";
 
+vi.mock("../hooks/useUpdateBooking", () => ({
+  useUpdateBooking: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+}));
+
 const mockBooking: Booking = {
   id: "booking-1",
   title: "Design Review",

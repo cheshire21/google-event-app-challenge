@@ -15,3 +15,9 @@ export const checkAvailability = (
 
 export const createBooking = (payload: CreateBookingPayload): Promise<Booking> =>
   api.post<Booking>("/bookings", payload).then((r) => r.data);
+
+export const getBookingById = (id: string): Promise<Booking> =>
+  api.get<Booking>(`/bookings/${id}`).then((r) => r.data);
+
+export const updateBooking = (id: string, payload: CreateBookingPayload): Promise<Booking> =>
+  api.patch<Booking>(`/bookings/${id}`, payload).then((r) => r.data);
