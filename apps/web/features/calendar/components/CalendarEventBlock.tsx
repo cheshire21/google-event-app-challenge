@@ -30,9 +30,18 @@ export const CalendarEventBlock = ({
         booking={bookingData}
         trigger={
           <div
+            role="button"
+            tabIndex={0}
+            aria-label={`Edit booking: ${event.title}`}
             className="absolute inset-x-0.5 overflow-hidden rounded px-1.5 py-0.5 bg-coral/20 border-l-2 border-coral text-coral cursor-pointer hover:bg-coral/30 transition-colors"
             style={{ top: `${topPercent}%`, height: `${Math.max(heightPercent, 3)}%` }}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.currentTarget.click();
+              }
+            }}
           >
             <p className="text-xs font-semibold truncate leading-tight">{event.title}</p>
             <p className="text-xs opacity-75 leading-tight">{timeLabel}</p>

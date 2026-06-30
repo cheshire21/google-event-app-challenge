@@ -32,6 +32,7 @@ export const BottomNav = (): JSX.Element => {
           <Link
             key={href}
             href={href}
+            aria-current={isActive ? "page" : undefined}
             className={`flex flex-col items-center gap-1 text-xs font-medium ${
               isActive ? "text-coral" : "text-brown/50"
             }`}

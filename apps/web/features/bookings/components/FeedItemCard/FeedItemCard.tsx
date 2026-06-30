@@ -89,7 +89,7 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
         <EditBookingDialog
           booking={booking}
           trigger={
-            <Button variant="ghost" size="icon" aria-label="Edit booking">
+            <Button variant="ghost" size="icon" aria-label={`Edit ${item.title}`}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>
           }
@@ -97,7 +97,7 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
         <CancelConfirmDialog
           booking={booking}
           trigger={
-            <Button variant="outline" size="icon" aria-label="Cancel booking">
+            <Button variant="outline" size="icon" aria-label={`Cancel ${item.title}`}>
               <X className="h-3.5 w-3.5" />
             </Button>
           }
