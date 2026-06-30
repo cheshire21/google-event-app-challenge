@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { AvailabilityResult, Booking, CreateBookingPayload, PagedBookings } from "./types";
+import type { AvailabilityResult, Booking, CreateBookingPayload, PagedBookings, PagedFeed } from "./types";
 
 export const getBookings = (page = 1, limit = 20): Promise<PagedBookings> =>
   api.get<PagedBookings>("/bookings", { params: { page, limit } }).then((r) => r.data);
@@ -31,3 +31,6 @@ export const updateBooking = (id: string, payload: CreateBookingPayload): Promis
 
 export const deleteBooking = (id: string): Promise<void> =>
   api.delete(`/bookings/${id}`).then((r) => r.data);
+
+export const getFeed = (page = 1, limit = 20, startFrom?: string): Promise<PagedFeed> =>
+  api.get<PagedFeed>("/bookings/feed", { params: { page, limit, ...(startFrom ? { startFrom } : {}) } }).then((r) => r.data);

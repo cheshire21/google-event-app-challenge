@@ -8,6 +8,8 @@ import { Clock, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
+import { TimePicker } from "@/components/ui/time-picker";
 import {
   Form,
   FormControl,
@@ -19,7 +21,7 @@ import {
 import { useDebounce } from "@/hooks/useDebounce";
 import { bookingSchema, type BookingFormValues } from "../schemas/booking.schema";
 import { useCheckAvailability } from "../hooks/useCheckAvailability";
-import { getWeekDays, toLocalISODate, buildISODateTime } from "../utils";
+import { toLocalISODate, buildISODateTime } from "../utils";
 import { ConflictWarning } from "./ConflictWarning";
 import { AvailableConfirmation } from "./AvailableConfirmation";
 import type { CreateBookingPayload } from "../types";
@@ -55,6 +57,13 @@ export const BookingForm = ({
 
   const { date, startTime, endTime } = form.watch();
 
+  const now = new Date();
+  const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  const isToday =
+    date instanceof Date &&
+    !isNaN(date.getTime()) &&
+    toLocalISODate(date) === toLocalISODate(now);
+
   const dateStr =
     date instanceof Date && !isNaN(date.getTime())
       ? toLocalISODate(date)
@@ -84,8 +93,6 @@ export const BookingForm = ({
     });
   };
 
-  const weekDays = getWeekDays(new Date());
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-5">
@@ -105,33 +112,23 @@ export const BookingForm = ({
         />
 
         {/* Day picker */}
-        <div>
-          <p className="mb-2 text-sm font-medium leading-none text-foreground">Day</p>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {weekDays.map((day) => {
-              const selected =
-                date instanceof Date && day.toDateString() === date.toDateString();
-              return (
-                <button
-                  key={day.toISOString()}
-                  type="button"
-                  onClick={() => form.setValue("date", day, { shouldValidate: true })}
-                  className={cn(
-                    "flex min-w-[60px] flex-col items-center rounded-xl border px-3 py-2 text-sm transition-colors",
-                    selected
-                      ? "border-coral bg-coral/10 text-coral"
-                      : "border-border text-muted-foreground hover:border-coral/40 hover:text-foreground",
-                  )}
-                >
-                  <span className="text-xs font-medium">
-                    {day.toLocaleDateString("en-US", { weekday: "short" })}
-                  </span>
-                  <span className="text-lg font-bold leading-tight">{day.getDate()}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Day</FormLabel>
+              <FormControl>
+                <DatePicker
+                  value={field.value instanceof Date && !isNaN(field.value.getTime()) ? field.value : undefined}
+                  onChange={(d) => field.onChange(d ?? new Date())}
+                  minDate={new Date()}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Start / End times */}
         <div className="grid grid-cols-2 gap-4">
@@ -142,7 +139,11 @@ export const BookingForm = ({
               <FormItem>
                 <FormLabel>Start</FormLabel>
                 <FormControl>
-                  <Input type="time" {...field} />
+                  <TimePicker
+                    value={field.value || undefined}
+                    onChange={field.onChange}
+                    min={isToday ? currentTime : undefined}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +156,11 @@ export const BookingForm = ({
               <FormItem>
                 <FormLabel>End</FormLabel>
                 <FormControl>
-                  <Input type="time" {...field} />
+                  <TimePicker
+                    value={field.value || undefined}
+                    onChange={field.onChange}
+                    min={startTime || (isToday ? currentTime : undefined)}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

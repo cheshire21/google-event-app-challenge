@@ -2,14 +2,14 @@
 
 import type { JSX } from "react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
-import { useBookings } from "../hooks/useBookings";
+import { useFeed } from "../hooks/useFeed";
 import { getGreeting, getDateLabel } from "../utils";
 import { StatsCards } from "./StatsCards";
 import { BookingsList } from "./BookingsList";
 
 export const DashboardPage = (): JSX.Element => {
   const { data: user } = useCurrentUser();
-  const { data } = useBookings();
+  const { data } = useFeed();
 
   const firstName = user?.name?.split(" ")[0] ?? "";
   const total = data?.pages[0]?.meta.total ?? 0;
@@ -32,7 +32,7 @@ export const DashboardPage = (): JSX.Element => {
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-brown">Your bookings</h2>
           <span className="body-text text-muted-foreground">
-            {total} {total === 1 ? "booking" : "bookings"}
+            {total} {total === 1 ? "item" : "items"}
           </span>
         </div>
         <BookingsList />

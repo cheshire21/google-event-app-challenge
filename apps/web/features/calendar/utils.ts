@@ -32,3 +32,15 @@ export const googleEventToCalendarEvent = (event: GoogleCalendarEventDto): Calen
   endTime: new Date(event.endTime),
   type: "google",
 });
+
+export const getCalendarHours = (): number[] =>
+  Array.from({ length: CALENDAR_TOTAL_HOURS }, (_, i) => CALENDAR_START_HOUR + i);
+
+export const getWeekLabel = (monday: Date, sunday: Date): string => {
+  const year = sunday.getFullYear();
+  const sameMonth = monday.getMonth() === sunday.getMonth();
+  if (sameMonth) {
+    return `${monday.toLocaleDateString("en-US", { month: "long" })} ${monday.getDate()} – ${sunday.getDate()}, ${year}`;
+  }
+  return `${monday.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${sunday.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${year}`;
+};

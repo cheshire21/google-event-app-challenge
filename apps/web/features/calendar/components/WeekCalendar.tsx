@@ -14,8 +14,8 @@ import {
   getMondayOfWeek,
   getWeekDays,
   toLocalISODate,
-  CALENDAR_START_HOUR,
-  CALENDAR_TOTAL_HOURS,
+  getCalendarHours,
+  getWeekLabel,
 } from "../utils";
 
 export const WeekCalendar = (): JSX.Element => {
@@ -71,18 +71,8 @@ export const WeekCalendar = (): JSX.Element => {
       }
     : undefined;
 
-  const hours = Array.from({ length: CALENDAR_TOTAL_HOURS }, (_, i) => CALENDAR_START_HOUR + i);
-
-  const weekLabel = (() => {
-    const first = monday;
-    const last = sunday;
-    const year = last.getFullYear();
-    const sameMonth = first.getMonth() === last.getMonth();
-    if (sameMonth) {
-      return `${first.toLocaleDateString("en-US", { month: "long" })} ${first.getDate()} – ${last.getDate()}, ${year}`;
-    }
-    return `${first.toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${last.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${year}`;
-  })();
+  const hours = getCalendarHours();
+  const weekLabel = getWeekLabel(monday, sunday);
 
   return (
     <div className="flex flex-col h-full">

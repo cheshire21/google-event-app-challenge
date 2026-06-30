@@ -25,7 +25,7 @@ export interface ConflictEntry {
   title: string;
   startTime: string;
   endTime: string;
-  type: "booking";
+  type: "booking" | "google";
 }
 
 export interface AvailabilityResult {
@@ -37,4 +37,18 @@ export interface CreateBookingPayload {
   title: string;
   startTime: string; // ISO 8601
   endTime: string; // ISO 8601
+}
+
+export interface FeedItem {
+  id: string;
+  type: "booking" | "google";
+  title: string;
+  startTime: string;
+  endTime: string;
+  description: string | null;
+}
+
+export interface PagedFeed {
+  data: FeedItem[];
+  meta: PageMeta;
 }

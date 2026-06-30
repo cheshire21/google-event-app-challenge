@@ -3,8 +3,8 @@
 import type { JSX } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useBookings } from "../hooks/useBookings";
-import { BookingCard } from "./BookingCard";
+import { useFeed } from "../hooks/useFeed";
+import { FeedItemCard } from "./FeedItemCard";
 import { EmptyState } from "./EmptyState";
 
 const BookingCardSkeleton = (): JSX.Element => (
@@ -13,14 +13,14 @@ const BookingCardSkeleton = (): JSX.Element => (
 
 export const BookingsList = (): JSX.Element => {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useBookings();
+    useFeed();
 
   const sentinelRef = useIntersectionObserver(
     fetchNextPage,
     hasNextPage && !isFetchingNextPage,
   );
 
-  const bookings = data?.pages.flatMap((p) => p.data) ?? [];
+  const items = data?.pages.flatMap((p) => p.data) ?? [];
 
   if (isLoading) {
     return (
@@ -32,14 +32,14 @@ export const BookingsList = (): JSX.Element => {
     );
   }
 
-  if (bookings.length === 0) {
+  if (items.length === 0) {
     return <EmptyState />;
   }
 
   return (
     <div className="flex flex-col gap-3">
-      {bookings.map((b) => (
-        <BookingCard key={b.id} booking={b} />
+      {items.map((item) => (
+        <FeedItemCard key={item.id} item={item} />
       ))}
       <div ref={sentinelRef} className="h-4" />
       {isFetchingNextPage && <BookingCardSkeleton />}

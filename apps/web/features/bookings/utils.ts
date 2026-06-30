@@ -36,8 +36,18 @@ export const formatDuration = (start: string, end: string): string => {
   return m ? `${h}h ${m}m` : `${h}h`;
 };
 
-export const buildISODateTime = (dateStr: string, time: string): string =>
-  `${dateStr}T${time}:00`;
+export const buildISODateTime = (dateStr: string, time: string): string => {
+  const dateParts = dateStr.split("-");
+  const timeParts = time.split(":");
+  return new Date(
+    Number(dateParts[0]),
+    Number(dateParts[1]) - 1,
+    Number(dateParts[2]),
+    Number(timeParts[0]),
+    Number(timeParts[1]),
+    0,
+  ).toISOString();
+};
 
 export const getGreeting = (): string => {
   const hour = new Date().getHours();

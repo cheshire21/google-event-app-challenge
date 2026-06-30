@@ -4,6 +4,7 @@ import type React from "react";
 import {
   CALENDAR_START_HOUR,
   CALENDAR_TOTAL_HOURS,
+  getCalendarHours,
   getTopPercent,
   getHeightPercent,
 } from "../utils";
@@ -25,9 +26,10 @@ export const DayColumn = ({
   bookings,
   onEmptyClick,
 }: DayColumnProps): JSX.Element => {
-  const hours = Array.from({ length: CALENDAR_TOTAL_HOURS }, (_, i) => CALENDAR_START_HOUR + i);
+  const hours = getCalendarHours();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if ((e.target as HTMLElement).closest('[role="dialog"]')) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const y = e.clientY - rect.top;
     const pct = y / rect.height;

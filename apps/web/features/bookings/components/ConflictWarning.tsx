@@ -18,7 +18,8 @@ export const ConflictWarning = ({ conflicts }: ConflictWarningProps): JSX.Elemen
     {conflicts.map((conflict) => (
       <p key={conflict.id} className="text-sm text-foreground">
         Overlaps <strong>{conflict.title}</strong> (
-        {formatTime(conflict.startTime)} – {formatTime(conflict.endTime)}) in your bookings.
+        {formatTime(conflict.startTime)} – {formatTime(conflict.endTime)}){" "}
+        {conflict.type === "google" ? "in your Google Calendar" : "in your bookings"}.
         Pick another time to continue.
       </p>
     ))}

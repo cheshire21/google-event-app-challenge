@@ -72,7 +72,7 @@ export const Sidebar = (): JSX.Element => {
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
               <span>{label}</span>
-              {href === "/connect" && (
+              {href === "/connect" && user?.hasGoogleCalendar && (
                 <span className="ml-auto rounded-full bg-teal/15 px-2 py-0.5 text-xs font-semibold text-teal">
                   On
                 </span>
