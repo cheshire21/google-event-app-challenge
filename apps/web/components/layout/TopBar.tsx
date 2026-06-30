@@ -10,7 +10,7 @@ export const TopBar = (): JSX.Element => {
 
   return (
     <header className="flex md:hidden h-14 items-center justify-between border-b border-border bg-white px-4">
-      <Link href="/dashboard" className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-coral">
           <CalendarDays className="h-4 w-4 text-white" />
         </div>

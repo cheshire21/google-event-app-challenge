@@ -13,7 +13,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/connect", label: "Connect", icon: Link2 },
 ];
@@ -24,7 +24,7 @@ export const BottomNav = (): JSX.Element => {
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 flex h-16 items-center justify-around border-t border-border bg-white">
       {navItems.map(({ href, label, icon: Icon }) => {
-        const isActive = pathname === href || pathname.startsWith(`${href}/`);
+        const isActive = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link
             key={href}

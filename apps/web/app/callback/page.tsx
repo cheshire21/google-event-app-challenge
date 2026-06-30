@@ -22,7 +22,7 @@ const CallbackPage = (): JSX.Element => {
       .then((token) => exchangeToken(token))
       .then(({ accessToken }) => {
         localStorage.setItem("access_token", accessToken);
-        router.replace("/dashboard");
+        window.location.replace("/");
       })
       .catch(() => {
         router.replace("/login");

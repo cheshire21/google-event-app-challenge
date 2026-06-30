@@ -14,6 +14,7 @@ const Providers = ({ children }: { children: ReactNode }): JSX.Element => {
         clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ?? ""}
         authorizationParams={{
           redirect_uri: typeof window !== "undefined" ? `${window.location.origin}/callback` : "",
+          audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
         }}
       >
         <AuthProvider>{children}</AuthProvider>

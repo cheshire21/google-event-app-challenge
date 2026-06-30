@@ -1,7 +1,6 @@
-import { type JSX } from "react";
+import type { JSX } from "react";
+import { DashboardPage } from "@/features/bookings/components/DashboardPage";
 
-const DashboardPage = (): JSX.Element => {
-  return <div>Dashboard</div>;
-};
+const Page = (): JSX.Element => <DashboardPage />;
 
-export default DashboardPage;
+export default Page;

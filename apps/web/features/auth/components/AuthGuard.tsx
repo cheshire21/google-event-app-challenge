@@ -17,7 +17,7 @@ export const AuthGuard = ({ children, requireAuth }: AuthGuardProps): JSX.Elemen
     if (requireAuth && !isAuthenticated) {
       router.replace("/login");
     } else if (!requireAuth && isAuthenticated) {
-      router.replace("/dashboard");
+      router.replace("/");
     }
   }, [requireAuth, isAuthenticated, router]);
 

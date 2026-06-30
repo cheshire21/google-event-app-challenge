@@ -30,7 +30,7 @@ describe("AuthGuard", () => {
     expect(mockReplace).toHaveBeenCalledWith("/login");
   });
 
-  it("renders nothing and calls router.replace('/dashboard') when requireAuth=false and authenticated", () => {
+  it("renders nothing and calls router.replace('/') when requireAuth=false and authenticated", () => {
     mockUseAuth.mockReturnValue({ token: "test-token", isAuthenticated: true });
 
     const { container } = render(
@@ -40,7 +40,7 @@ describe("AuthGuard", () => {
     );
 
     expect(container.firstChild).toBeNull();
-    expect(mockReplace).toHaveBeenCalledWith("/dashboard");
+    expect(mockReplace).toHaveBeenCalledWith("/");
   });
 
   it("renders children when requireAuth=true and authenticated", () => {
