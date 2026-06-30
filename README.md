@@ -140,7 +140,7 @@ Requires the stack to be running (`docker-compose up`).
 
 ```sh
 # Docker
-docker-compose exec api pnpm test
+docker-compose exec api pnpm --filter=api test
 
 # Local
 pnpm --filter=api test
@@ -150,7 +150,7 @@ Watch mode:
 
 ```sh
 # Docker
-docker-compose exec api pnpm test:watch
+docker-compose exec api pnpm --filter=api test:watch
 
 # Local
 pnpm --filter=api test:watch
@@ -158,19 +158,31 @@ pnpm --filter=api test:watch
 
 ### Coverage
 
+API:
+
 ```sh
 # Docker
-docker-compose exec api pnpm test:cov
+docker-compose exec api pnpm --filter=api test:cov
 
 # Local
 pnpm --filter=api test:cov
 ```
 
+Web (note: script is `test:coverage` — uses Vitest):
+
+```sh
+# Docker
+docker-compose exec web pnpm --filter=web test:coverage
+
+# Local
+pnpm --filter=web test:coverage
+```
+
 ### E2E tests
 
 ```sh
-# Docker (requires postgres — already up with docker-compose up)
-docker-compose exec api pnpm test:e2e
+# Docker (requires postgres — already up with docker-compose up --build)
+docker-compose exec api pnpm --filter=api test:e2e
 
 # Local
 pnpm --filter=api test:e2e
@@ -180,8 +192,8 @@ pnpm --filter=api test:e2e
 
 ```sh
 # Docker
-docker-compose exec web pnpm lint
-docker-compose exec api pnpm lint
+docker-compose exec api pnpm --filter=api lint
+docker-compose exec web pnpm --filter=web lint
 
 # Local
 pnpm lint
