@@ -27,7 +27,9 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import { PaginatedBookingResponseDto } from './dto/paginated-booking-response.dto';
+import { PaginatedFeedResponseDto } from './dto/paginated-feed-response.dto';
 import { BookingRangeQueryDto } from './dto/booking-range-query.dto';
+import { FeedQueryDto } from './dto/feed-query.dto';
 import { AvailabilityQueryDto } from './dto/availability-query.dto';
 import { AvailabilityResponseDto } from './dto/availability-response.dto';
 
@@ -62,6 +64,15 @@ export class BookingsController {
       new Date(query.end),
       query.excludeId,
     );
+  }
+
+  @Get('feed')
+  @ApiOkResponse({ type: PaginatedFeedResponseDto })
+  getFeed(
+    @CurrentUser() currentUser: { userId: string },
+    @Query() query: FeedQueryDto,
+  ) {
+    return this.bookingsService.getFeed(currentUser.userId, query);
   }
 
   @Get(':id')
