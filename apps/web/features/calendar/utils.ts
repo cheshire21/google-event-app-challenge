@@ -4,8 +4,8 @@ import type { CalendarEvent, GoogleCalendarEventDto } from "./types";
 
 export { getMondayOfWeek, getWeekDays, toLocalISODate };
 
-export const CALENDAR_START_HOUR = 8;
-export const CALENDAR_TOTAL_HOURS = 13; // 8 AM → 9 PM
+export const CALENDAR_START_HOUR = 0;
+export const CALENDAR_TOTAL_HOURS = 24;
 
 export const getTopPercent = (time: Date): number => {
   const hours = time.getHours() + time.getMinutes() / 60;

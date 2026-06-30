@@ -1,35 +1,38 @@
 "use client";
 
 import type { JSX } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import type React from "react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useFeed } from "../hooks/useFeed";
+import type { FeedItem } from "../types";
 import { FeedItemCard } from "./FeedItemCard";
 import { EmptyState } from "./EmptyState";
+import { BookingCardSkeleton, BookingListSkeleton } from "./BookingSkeletons";
 
-const BookingCardSkeleton = (): JSX.Element => (
-  <Skeleton className="h-[76px] w-full rounded-xl" />
-);
+interface BookingsListProps {
+  items: FeedItem[];
+  isLoading: boolean;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+  scrollRef?: React.RefObject<HTMLElement | null>;
+}
 
-export const BookingsList = (): JSX.Element => {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useFeed();
-
+export const BookingsList = ({
+  items,
+  isLoading,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+  scrollRef,
+}: BookingsListProps): JSX.Element => {
   const sentinelRef = useIntersectionObserver(
     fetchNextPage,
     hasNextPage && !isFetchingNextPage,
+    scrollRef,
   );
 
-  const items = data?.pages.flatMap((p) => p.data) ?? [];
-
   if (isLoading) {
-    return (
-      <div className="flex flex-col gap-3">
-        <BookingCardSkeleton />
-        <BookingCardSkeleton />
-        <BookingCardSkeleton />
-      </div>
-    );
+    return <BookingListSkeleton />;
   }
 
   if (items.length === 0) {

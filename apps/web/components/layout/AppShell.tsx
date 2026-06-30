@@ -11,11 +11,11 @@ interface AppShellProps {
 }
 
 export const AppShell = ({ children }: AppShellProps): JSX.Element => (
-  <div className="flex min-h-screen">
+  <div className="flex h-screen overflow-hidden">
     <Sidebar />
     <div className="flex flex-1 flex-col">
       <TopBar />
-      <main className="flex-1 overflow-y-auto p-6 md:p-8 pb-24 md:pb-8">
+      <main className="flex-1 overflow-y-auto p-3 xs:p-4 sm:p-6 md:p-8 pb-24 md:pb-8">
         {children}
       </main>
       <BottomNav />

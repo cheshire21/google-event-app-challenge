@@ -1,9 +1,10 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-xs: 23.125rem; /* 370px — just below iPhone SE (375px) */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -36,10 +37,10 @@
 
 :root {
   --radius: 0.625rem;
-  --color-cream: #FAF7F2;
-  --color-coral: #E8694A;
-  --color-teal: #38B2AC;
-  --color-brown: #3D2C2C;
+  --color-cream: #faf7f2;
+  --color-coral: #e8694a;
+  --color-teal: #38b2ac;
+  --color-brown: #3d2c2c;
   --background: var(--color-cream);
   --foreground: var(--color-brown);
   --card: oklch(1 0 0);

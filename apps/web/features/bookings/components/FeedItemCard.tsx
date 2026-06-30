@@ -33,8 +33,8 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
 
   if (isGoogle) {
     return (
-      <div className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
-        <div className="flex min-w-[52px] flex-col items-center justify-center rounded-xl bg-teal/10 px-3 py-2 text-teal">
+      <div className="flex items-center gap-2 rounded-xl border bg-card p-3 shadow-sm xs:gap-3 sm:gap-4 xs:p-3 sm:p-4">
+        <div className="flex min-w-[44px] flex-col items-center justify-center rounded-xl bg-teal/10 px-2 py-2 text-teal xs:min-w-[48px] sm:min-w-[52px] sm:px-3">
           <span className="text-xs font-semibold uppercase leading-none">{dayAbbrev}</span>
           <span className="text-xl font-bold leading-tight">{dayNumber}</span>
         </div>
@@ -46,12 +46,11 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
           </div>
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Clock className="h-3.5 w-3.5 shrink-0" />
-            <span>
-              {formatTime(item.startTime)} – {formatTime(item.endTime)}
-              {" · "}
-              {formatDuration(item.startTime, item.endTime)}
-            </span>
+            <span>{formatTime(item.startTime)} – {formatTime(item.endTime)}</span>
           </div>
+          <span className="text-xs text-muted-foreground pl-[18px]">
+            {formatDuration(item.startTime, item.endTime)}
+          </span>
         </div>
       </div>
     );
@@ -68,8 +67,8 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
   };
 
   return (
-    <div className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
-      <div className="flex min-w-[52px] flex-col items-center justify-center rounded-xl bg-coral/10 px-3 py-2 text-coral">
+    <div className="flex items-center gap-2 rounded-xl border bg-card p-3 shadow-sm xs:gap-3 sm:gap-4 xs:p-3 sm:p-4">
+      <div className="flex min-w-[44px] flex-col items-center justify-center rounded-xl bg-coral/10 px-2 py-2 text-coral xs:min-w-[48px] sm:min-w-[52px] sm:px-3">
         <span className="text-xs font-semibold uppercase leading-none">{dayAbbrev}</span>
         <span className="text-xl font-bold leading-tight">{dayNumber}</span>
       </div>
@@ -80,30 +79,30 @@ export const FeedItemCard = ({ item }: FeedItemCardProps): JSX.Element => {
         </div>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <Clock className="h-3.5 w-3.5 shrink-0" />
-          <span>
-            {formatTime(item.startTime)} – {formatTime(item.endTime)}
-            {" · "}
-            {formatDuration(item.startTime, item.endTime)}
-          </span>
+          <span>{formatTime(item.startTime)} – {formatTime(item.endTime)}</span>
         </div>
+        <span className="text-xs text-muted-foreground pl-[18px]">
+          {formatDuration(item.startTime, item.endTime)}
+        </span>
       </div>
-      <EditBookingDialog
-        booking={booking}
-        trigger={
-          <Button variant="ghost" size="icon" aria-label="Edit booking">
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-        }
-      />
-      <CancelConfirmDialog
-        booking={booking}
-        trigger={
-          <Button variant="outline" size="sm">
-            <X className="h-3.5 w-3.5" />
-            Cancel
-          </Button>
-        }
-      />
+      <div className="flex items-center gap-1 shrink-0">
+        <EditBookingDialog
+          booking={booking}
+          trigger={
+            <Button variant="ghost" size="icon" aria-label="Edit booking">
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+        <CancelConfirmDialog
+          booking={booking}
+          trigger={
+            <Button variant="outline" size="icon" aria-label="Cancel booking">
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+      </div>
     </div>
   );
 };

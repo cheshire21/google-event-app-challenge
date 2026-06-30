@@ -23,7 +23,7 @@ export const BottomNav = (): JSX.Element => {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 flex h-16 items-center justify-around border-t border-border bg-white">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 flex h-16 items-center justify-around border-t border-border bg-white">
       {navItems.map(({ href, label, icon: Icon }) => {
         const isActive = isNavItemActive(href, pathname);
         return (

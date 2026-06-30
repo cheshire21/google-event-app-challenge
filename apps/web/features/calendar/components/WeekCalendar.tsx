@@ -112,7 +112,7 @@ export const WeekCalendar = (): JSX.Element => {
             {hours.map((h) => (
               <div key={h} className="h-14 flex items-start justify-end pr-2 pt-0.5">
                 <span className="text-xs text-muted-foreground">
-                  {h === 12 ? "12 PM" : h > 12 ? `${h - 12} PM` : `${h} AM`}
+                  {h === 0 ? "12 AM" : h < 12 ? `${h} AM` : h === 12 ? "12 PM" : `${h - 12} PM`}
                 </span>
               </div>
             ))}
