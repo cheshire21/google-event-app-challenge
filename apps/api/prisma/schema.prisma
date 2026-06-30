@@ -9,26 +9,30 @@ datasource db {
 
 model User {
   id                 String    @id @default(uuid())
-  auth0Id            String    @unique
+  auth0Id            String    @unique @map("auth0_id")
   email              String    @unique
   name               String
-  googleAccessToken  String?
-  googleRefreshToken String?
-  googleTokenExpiry  DateTime?
-  hasGoogleCalendar  Boolean   @default(false)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  googleAccessToken  String?   @map("google_access_token")
+  googleRefreshToken String?   @map("google_refresh_token")
+  googleTokenExpiry  DateTime? @map("google_token_expiry")
+  hasGoogleCalendar  Boolean   @default(false) @map("has_google_calendar")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
   bookings           Booking[]
+
+  @@map("users")
 }
 
 model Booking {
   id          String   @id @default(uuid())
-  userId      String
+  userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String?
-  startTime   DateTime
-  endTime     DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  startTime   DateTime @map("start_time")
+  endTime     DateTime @map("end_time")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("bookings")
 }
