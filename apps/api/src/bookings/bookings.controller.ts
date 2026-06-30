@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -20,22 +21,47 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { PaginationQueryDto } from '@/shared/dto/pagination-query.dto';
 import { BookingsService } from './bookings.service';
+import { AvailabilityService } from './availability.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
+import { PaginatedBookingResponseDto } from './dto/paginated-booking-response.dto';
+import { AvailabilityQueryDto } from './dto/availability-query.dto';
+import { AvailabilityResponseDto } from './dto/availability-response.dto';
 
 @ApiTags('bookings')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('bookings')
 export class BookingsController {
-  constructor(private readonly bookingsService: BookingsService) {}
+  constructor(
+    private readonly bookingsService: BookingsService,
+    private readonly availabilityService: AvailabilityService,
+  ) {}
 
   @Get()
-  @ApiOkResponse({ type: [BookingResponseDto] })
-  findAll(@CurrentUser() currentUser: { userId: string }) {
-    return this.bookingsService.findAll(currentUser.userId);
+  @ApiOkResponse({ type: PaginatedBookingResponseDto })
+  findAll(
+    @CurrentUser() currentUser: { userId: string },
+    @Query() query: PaginationQueryDto,
+  ) {
+    return this.bookingsService.findAll(currentUser.userId, query);
+  }
+
+  @Get('availability')
+  @ApiOkResponse({ type: AvailabilityResponseDto })
+  async checkAvailability(
+    @CurrentUser() currentUser: { userId: string },
+    @Query() query: AvailabilityQueryDto,
+  ): Promise<AvailabilityResponseDto> {
+    return this.availabilityService.checkAvailability(
+      currentUser.userId,
+      new Date(query.start),
+      new Date(query.end),
+      query.excludeId,
+    );
   }
 
   @Get(':id')

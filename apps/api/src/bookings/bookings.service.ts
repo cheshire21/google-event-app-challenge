@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '@/shared/prisma/prisma.service';
+import { PaginationQueryDto } from '@/shared/dto/pagination-query.dto';
+import { PaginatedBookingResponseDto } from './dto/paginated-booking-response.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
@@ -9,11 +11,32 @@ import { BookingResponseDto } from './dto/booking-response.dto';
 export class BookingsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(userId: string): Promise<BookingResponseDto[]> {
-    const bookings = await this.prisma.booking.findMany({ where: { userId } });
-    return plainToInstance(BookingResponseDto, bookings, {
-      excludeExtraneousValues: true,
-    });
+  async findAll(
+    userId: string,
+    { page, limit }: PaginationQueryDto,
+  ): Promise<PaginatedBookingResponseDto> {
+    const [bookings, total] = await Promise.all([
+      this.prisma.booking.findMany({
+        where: { userId },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { startTime: 'asc' },
+      }),
+      this.prisma.booking.count({ where: { userId } }),
+    ]);
+    return plainToInstance(
+      PaginatedBookingResponseDto,
+      {
+        data: bookings,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
   async findOne(id: string, userId: string): Promise<BookingResponseDto> {

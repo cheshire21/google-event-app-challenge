@@ -18,9 +18,23 @@
 
 ---
 
+## DTO Naming Conventions
+
+| Suffix | Role | Used with |
+|---|---|---|
+| `Create<Feature>Dto` | Body input for POST | `@Body()` |
+| `Update<Feature>Dto` | Body input for PATCH | `@Body()` |
+| `<Feature>QueryDto` | Query string input | `@Query()` |
+| `<Feature>ResponseDto` | Single-item output | service return, `@ApiOkResponse` |
+| `Paginated<Feature>ResponseDto` | Paginated list output | extends `PagedResponseDto<FeatureResponseDto>` |
+
+NestJS docs use no stricter convention than `Dto` suffix — the prefixes above are this project's standard.
+
+---
+
 ## Pagination
 
-All list endpoints use **page-based pagination** via `PaginationQueryDto`. The response is always wrapped in `PagedResponseDto<T>`.
+All list endpoints use **page-based pagination** via `PaginationQueryDto`. Each feature defines its own `Paginated<Feature>ResponseDto` (extends the shared generic) so Swagger gets a concrete named type.
 
 ### `PaginationQueryDto` (shared, lives in `src/shared/dto/pagination-query.dto.ts`)
 ```ts
@@ -58,29 +72,48 @@ export class PagedResponseDto<T> {
 }
 ```
 
+### Per-feature paginated DTO (lives in `src/<feature>/dto/paginated-<feature>-response.dto.ts`)
+
+Override `data` with `@Type()` — TypeScript generics are erased at runtime so class-transformer can't infer `T` from `PagedResponseDto<T>`:
+
+```ts
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Type } from 'class-transformer';
+import { PagedResponseDto } from '@/shared/dto/paged-response.dto';
+import { <Feature>ResponseDto } from './<feature>-response.dto';
+
+export class Paginated<Feature>ResponseDto extends PagedResponseDto<<Feature>ResponseDto> {
+  @Expose()
+  @ApiProperty({ type: [<Feature>ResponseDto] })
+  @Type(() => <Feature>ResponseDto)
+  data: <Feature>ResponseDto[];
+}
+```
+
 ### Service pattern
 ```ts
-async findAll(userId: string, { page, limit }: PaginationQueryDto): Promise<PagedResponseDto<FeatureResponseDto>> {
+async findAll(userId: string, { page, limit }: PaginationQueryDto): Promise<Paginated<Feature>ResponseDto> {
   const [items, total] = await Promise.all([
-    this.prisma.feature.findMany({
+    this.prisma.<feature>.findMany({
       where: { userId },
       skip: (page - 1) * limit,
       take: limit,
       orderBy: { createdAt: 'desc' },
     }),
-    this.prisma.feature.count({ where: { userId } }),
+    this.prisma.<feature>.count({ where: { userId } }),
   ]);
-  return {
-    data: plainToInstance(FeatureResponseDto, items, { excludeExtraneousValues: true }),
-    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
-  };
+  return plainToInstance(
+    Paginated<Feature>ResponseDto,
+    { data: items, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } },
+    { excludeExtraneousValues: true },
+  );
 }
 ```
 
 ### Controller pattern
 ```ts
 @Get()
-@ApiOkResponse({ description: 'Paginated list' })
+@ApiOkResponse({ type: Paginated<Feature>ResponseDto })
 findAll(
   @CurrentUser() { userId }: CurrentUserDto,
   @Query() query: PaginationQueryDto,

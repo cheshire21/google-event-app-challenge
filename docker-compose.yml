@@ -18,7 +18,7 @@ services:
     environment:
       PNPM_HOME: /pnpm
       PATH: /pnpm:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    command: sh -c "corepack enable && pnpm run --filter=api prisma:generate && pnpm run --filter=api dev"
+    command: sh -c "corepack enable && pnpm run --filter=api prisma:generate && pnpm run --filter=api prisma:deploy && pnpm run --filter=api dev"
     ports:
       - "3001:3001"
     env_file:

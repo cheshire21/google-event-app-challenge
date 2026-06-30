@@ -3,6 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Booking } from '@prisma/client';
 import { PrismaService } from '@/shared/prisma/prisma.service';
+import type { PaginationQueryDto } from '@/shared/dto/pagination-query.dto';
 import { BookingFactory } from '@/test/factories/booking.factory';
 import { UserFactory } from '@/test/factories/user.factory';
 import type { PrismaMock } from '@/test/mocks/prisma.mock';
@@ -43,14 +44,28 @@ describe('BookingsService', () => {
     it('should return only bookings belonging to the current user', async () => {
       const userBookings = bookingFactory.makeMany(3, { userId });
       prismaMock.booking.findMany.mockResolvedValue(userBookings);
+      prismaMock.booking.count.mockResolvedValue(3);
 
-      const result = await service.findAll(userId);
+      const query: PaginationQueryDto = { page: 1, limit: 20 };
+      const result = await service.findAll(userId, query);
 
       expect(prismaMock.booking.findMany).toHaveBeenCalledWith({
         where: { userId },
+        skip: 0,
+        take: 20,
+        orderBy: { startTime: 'asc' },
       });
-      expect(result).toHaveLength(3);
-      result.forEach((item) => {
+      expect(prismaMock.booking.count).toHaveBeenCalledWith({
+        where: { userId },
+      });
+      expect(result.data).toHaveLength(3);
+      expect(result.meta).toEqual({
+        total: 3,
+        page: 1,
+        limit: 20,
+        totalPages: 1,
+      });
+      result.data.forEach((item) => {
         expect(item).toBeInstanceOf(BookingResponseDto);
       });
     });
