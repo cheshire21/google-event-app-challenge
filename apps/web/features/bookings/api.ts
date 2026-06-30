@@ -21,3 +21,6 @@ export const getBookingById = (id: string): Promise<Booking> =>
 
 export const updateBooking = (id: string, payload: CreateBookingPayload): Promise<Booking> =>
   api.patch<Booking>(`/bookings/${id}`, payload).then((r) => r.data);
+
+export const deleteBooking = (id: string): Promise<void> =>
+  api.delete(`/bookings/${id}`).then((r) => r.data);

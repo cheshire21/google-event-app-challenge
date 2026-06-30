@@ -36,14 +36,10 @@ export const BookingsList = (): JSX.Element => {
     return <EmptyState />;
   }
 
-  const handleCancel = (_id: string): void => {
-    // TODO: wire up cancel mutation in a future ticket
-  };
-
   return (
     <div className="flex flex-col gap-3">
       {bookings.map((b) => (
-        <BookingCard key={b.id} booking={b} onCancel={handleCancel} />
+        <BookingCard key={b.id} booking={b} />
       ))}
       <div ref={sentinelRef} className="h-4" />
       {isFetchingNextPage && <BookingCardSkeleton />}

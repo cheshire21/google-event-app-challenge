@@ -6,25 +6,18 @@ import { Button } from "@/components/ui/button";
 import type { Booking } from "../types";
 import { formatTime, formatDuration } from "../utils";
 import { EditBookingDialog } from "./EditBookingDialog";
+import { CancelConfirmDialog } from "./CancelConfirmDialog";
 
 interface BookingCardProps {
   booking: Booking;
-  onCancel: (id: string) => void;
 }
 
-export const BookingCard = ({
-  booking,
-  onCancel,
-}: BookingCardProps): JSX.Element => {
+export const BookingCard = ({ booking }: BookingCardProps): JSX.Element => {
   const start = new Date(booking.startTime);
   const dayAbbrev = start
     .toLocaleDateString("en-US", { weekday: "short" })
     .toUpperCase();
   const dayNumber = start.getDate();
-
-  const handleCancel = (): void => {
-    onCancel(booking.id);
-  };
 
   return (
     <div className="flex items-center gap-4 rounded-xl border bg-card p-4 shadow-sm">
@@ -60,10 +53,15 @@ export const BookingCard = ({
       />
 
       {/* Cancel button */}
-      <Button variant="outline" size="sm" onClick={handleCancel}>
-        <X className="h-3.5 w-3.5" />
-        Cancel
-      </Button>
+      <CancelConfirmDialog
+        booking={booking}
+        trigger={
+          <Button variant="outline" size="sm">
+            <X className="h-3.5 w-3.5" />
+            Cancel
+          </Button>
+        }
+      />
     </div>
   );
 };
