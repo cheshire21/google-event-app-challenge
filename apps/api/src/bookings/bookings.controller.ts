@@ -21,13 +21,13 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
-import { PaginationQueryDto } from '@/shared/dto/pagination-query.dto';
 import { BookingsService } from './bookings.service';
 import { AvailabilityService } from './availability.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import { PaginatedBookingResponseDto } from './dto/paginated-booking-response.dto';
+import { BookingRangeQueryDto } from './dto/booking-range-query.dto';
 import { AvailabilityQueryDto } from './dto/availability-query.dto';
 import { AvailabilityResponseDto } from './dto/availability-response.dto';
 
@@ -45,7 +45,7 @@ export class BookingsController {
   @ApiOkResponse({ type: PaginatedBookingResponseDto })
   findAll(
     @CurrentUser() currentUser: { userId: string },
-    @Query() query: PaginationQueryDto,
+    @Query() query: BookingRangeQueryDto,
   ) {
     return this.bookingsService.findAll(currentUser.userId, query);
   }

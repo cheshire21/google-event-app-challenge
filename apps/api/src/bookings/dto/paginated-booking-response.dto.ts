@@ -7,5 +7,5 @@ export class PaginatedBookingResponseDto extends PagedResponseDto<BookingRespons
   @Expose()
   @ApiProperty({ type: [BookingResponseDto] })
   @Type(() => BookingResponseDto)
-  data: BookingResponseDto[];
+  declare data: BookingResponseDto[];
 }

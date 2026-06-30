@@ -17,6 +17,10 @@ export class UserResponseDto {
 
   @Expose()
   @ApiProperty()
+  hasGoogleCalendar: boolean;
+
+  @Expose()
+  @ApiProperty()
   createdAt: Date;
 
   @Expose()
