@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarDays, LayoutDashboard, Link2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { isNavItemActive } from "./utils";
 
 interface NavItem {
   href: string;
@@ -24,7 +25,7 @@ export const BottomNav = (): JSX.Element => {
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 flex h-16 items-center justify-around border-t border-border bg-white">
       {navItems.map(({ href, label, icon: Icon }) => {
-        const isActive = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+        const isActive = isNavItemActive(href, pathname);
         return (
           <Link
             key={href}

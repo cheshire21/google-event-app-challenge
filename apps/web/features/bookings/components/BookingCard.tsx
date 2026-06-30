@@ -4,24 +4,7 @@ import type { JSX } from "react";
 import { X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Booking } from "../types";
-
-const formatTime = (iso: string): string =>
-  new Date(iso)
-    .toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    })
-    .replace(":00", "");
-
-const formatDuration = (start: string, end: string): string => {
-  const mins =
-    (new Date(end).getTime() - new Date(start).getTime()) / 60000;
-  if (mins < 60) return `${mins}m`;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return m ? `${h}h ${m}m` : `${h}h`;
-};
+import { formatTime, formatDuration } from "../utils";
 
 interface BookingCardProps {
   booking: Booking;

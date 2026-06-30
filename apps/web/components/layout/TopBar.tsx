@@ -4,6 +4,7 @@ import type { JSX } from "react";
 import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
+import { getUserInitial } from "@/features/users/utils";
 
 export const TopBar = (): JSX.Element => {
   const { data: user } = useCurrentUser();
@@ -17,7 +18,7 @@ export const TopBar = (): JSX.Element => {
         <span className="font-quicksand font-bold text-lg text-brown">Nook</span>
       </Link>
       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-coral text-sm font-semibold text-white">
-        {user?.name?.[0]?.toUpperCase() ?? "?"}
+        {getUserInitial(user?.name)}
       </div>
     </header>
   );

@@ -352,6 +352,48 @@ If `notes` needs the current user → get it from `lib/auth` or a shared context
 
 ---
 
+## Utils Extraction
+
+Every feature folder has a `utils.ts`. Shared layout helpers live in `components/layout/utils.ts`. Shared user helpers live in `features/users/utils.ts`.
+
+**Extract to `utils.ts` when:**
+
+| Trigger | Rule |
+|---|---|
+| Pure function defined inside a component or hook file | Move it to `utils.ts` and import it |
+| Same expression or function appears in 2+ files | Extract immediately — one source of truth |
+| Same inline template or pattern used 3+ times in one file | Extract to a named helper |
+
+**What belongs in utils:**
+- Formatters: `formatTime`, `formatDuration`, `toLocalISODate`, `buildISODateTime`
+- Date helpers: `getMondayOfWeek`, `getWeekDays`
+- Display helpers: `getGreeting`, `getDateLabel`, `getUserInitial`
+- Predicates: `isNavItemActive`
+
+**What does NOT belong in utils:**
+- Anything that calls a React hook — that belongs in `hooks/`
+- Anything with side effects — that belongs in a service or hook
+- One-liners used in exactly one place and obvious from context
+
+**Where to put it:**
+
+| Logic belongs to | File |
+|---|---|
+| A specific feature (bookings, auth, users…) | `features/<feature>/utils.ts` |
+| Layout components (Sidebar, TopBar, BottomNav…) | `components/layout/utils.ts` |
+| Shared across multiple features | `utils/` at the app root |
+
+**Example:**
+```ts
+// ✗ defined inside BookingCard.tsx
+const formatDuration = (start: string, end: string): string => { ... };
+
+// ✓ in features/bookings/utils.ts, imported where needed
+export const formatDuration = (start: string, end: string): string => { ... };
+```
+
+---
+
 ## Features
 
 There is no fixed list of required features. Each feature is added as the product grows. When adding a new feature:

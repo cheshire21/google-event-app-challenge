@@ -1,9 +1,9 @@
 "use client";
 
 import type { JSX } from "react";
-import Link from "next/link";
 import { CalendarCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NewBookingDialog } from "./NewBookingDialog";
 
 export const EmptyState = (): JSX.Element => (
   <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed py-16 text-center">
@@ -19,8 +19,8 @@ export const EmptyState = (): JSX.Element => (
       </p>
     </div>
 
-    <Button asChild>
-      <Link href="/bookings/new">New booking</Link>
-    </Button>
+    <NewBookingDialog
+      trigger={<Button>New booking</Button>}
+    />
   </div>
 );

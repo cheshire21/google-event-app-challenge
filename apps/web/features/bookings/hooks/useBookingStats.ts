@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useBookings } from "./useBookings";
+import { getMondayOfWeek } from "../utils";
 
 export interface BookingStats {
   upcoming: number;
@@ -14,10 +15,7 @@ export const useBookingStats = (): BookingStats => {
     const all = data?.pages.flatMap((p) => p.data) ?? [];
     const now = new Date();
 
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Monday
-    startOfWeek.setHours(0, 0, 0, 0);
-
+    const startOfWeek = getMondayOfWeek(now);
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 7);
 

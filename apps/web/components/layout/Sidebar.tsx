@@ -3,10 +3,13 @@
 import type { JSX } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NewBookingDialog } from "@/features/bookings/components/NewBookingDialog";
 import { useAuth0 } from "@auth0/auth0-react";
 import { CalendarDays, LayoutDashboard, Link2, LogOut } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
+import { getUserInitial } from "@/features/users/utils";
+import { isNavItemActive } from "./utils";
 
 interface NavItem {
   href: string;
@@ -41,18 +44,22 @@ export const Sidebar = (): JSX.Element => {
 
       {/* New Booking CTA */}
       <div className="px-4 mb-6">
-        <Link
-          href="/bookings/new"
-          className="flex w-full items-center justify-center gap-1.5 rounded-2xl bg-coral py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-        >
-          + New booking
-        </Link>
+        <NewBookingDialog
+          trigger={
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-1.5 rounded-2xl bg-coral py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              + New booking
+            </button>
+          }
+        />
       </div>
 
       {/* Nav Items */}
       <nav className="flex-1 flex flex-col gap-1 px-3">
         {navItems.map(({ href, label, icon: Icon }) => {
-          const isActive = href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+          const isActive = isNavItemActive(href, pathname);
           return (
             <Link
               key={href}
@@ -78,7 +85,7 @@ export const Sidebar = (): JSX.Element => {
       {/* User Section */}
       <div className="mt-auto border-t border-border px-4 py-4 flex items-center gap-3">
         <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-coral text-sm font-semibold text-white">
-          {user?.name?.[0]?.toUpperCase() ?? "?"}
+          {getUserInitial(user?.name)}
         </div>
         <div className="flex-1 min-w-0">
           <p className="truncate text-sm font-medium text-brown">{user?.name ?? ""}</p>

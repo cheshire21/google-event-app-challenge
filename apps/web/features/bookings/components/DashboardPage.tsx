@@ -3,24 +3,9 @@
 import type { JSX } from "react";
 import { useCurrentUser } from "@/features/users/hooks/useCurrentUser";
 import { useBookings } from "../hooks/useBookings";
+import { getGreeting, getDateLabel } from "../utils";
 import { StatsCards } from "./StatsCards";
 import { BookingsList } from "./BookingsList";
-
-const getGreeting = (): string => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
-};
-
-const getDateLabel = (): string => {
-  const raw = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
-  return raw.toUpperCase().replace(", ", " · ");
-};
 
 export const DashboardPage = (): JSX.Element => {
   const { data: user } = useCurrentUser();

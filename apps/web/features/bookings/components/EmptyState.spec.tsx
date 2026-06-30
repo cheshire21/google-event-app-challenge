@@ -1,34 +1,35 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { EmptyState } from "./EmptyState";
 
-vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), back: vi.fn() }),
 }));
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  return Wrapper;
+};
 
 describe("EmptyState", () => {
   it("renders the 'No bookings yet' heading", () => {
-    render(<EmptyState />);
+    render(<EmptyState />, { wrapper: createWrapper() });
     expect(screen.getByText("No bookings yet")).toBeDefined();
   });
 
   it("renders the descriptive paragraph", () => {
-    render(<EmptyState />);
-    expect(
-      screen.getByText(/Reserve your first time slot/),
-    ).toBeDefined();
+    render(<EmptyState />, { wrapper: createWrapper() });
+    expect(screen.getByText(/Reserve your first time slot/)).toBeDefined();
   });
 
-  it("renders a 'New booking' link pointing to /bookings/new", () => {
-    render(<EmptyState />);
-    const link = screen.getByRole("link", { name: "New booking" });
-    expect(link).toBeDefined();
-    expect((link as HTMLAnchorElement).href).toContain("/bookings/new");
+  it("renders a 'New booking' button", () => {
+    render(<EmptyState />, { wrapper: createWrapper() });
+    expect(screen.getByRole("button", { name: "New booking" })).toBeDefined();
   });
 });
