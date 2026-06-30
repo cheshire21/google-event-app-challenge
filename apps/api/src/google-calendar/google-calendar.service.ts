@@ -53,7 +53,7 @@ export class GoogleCalendarService {
         hasGoogleCalendar: true,
       },
     });
-    return `${this.config.getOrThrow<string>('FRONTEND_URL')}/calendar?connected=true`;
+    return `${this.config.getOrThrow<string>('FRONTEND_URL')}/connect?connected=true`;
   }
 
   async getEvents(

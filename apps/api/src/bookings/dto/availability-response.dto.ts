@@ -20,8 +20,8 @@ export class ConflictItemResponseDto {
   endTime: Date;
 
   @Expose()
-  @ApiProperty({ enum: ['booking'] })
-  type: 'booking';
+  @ApiProperty({ enum: ['booking', 'google'] })
+  type: 'booking' | 'google';
 }
 
 @Exclude()

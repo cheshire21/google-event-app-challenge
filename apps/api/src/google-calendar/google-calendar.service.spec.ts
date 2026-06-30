@@ -152,7 +152,7 @@ describe('GoogleCalendarService', () => {
           hasGoogleCalendar: true,
         },
       });
-      expect(redirectUrl).toBe('http://localhost:3000/calendar?connected=true');
+      expect(redirectUrl).toBe('http://localhost:3000/connect?connected=true');
     });
   });
 
