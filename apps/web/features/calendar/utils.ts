@@ -36,6 +36,14 @@ export const googleEventToCalendarEvent = (event: GoogleCalendarEventDto): Calen
 export const getCalendarHours = (): number[] =>
   Array.from({ length: CALENDAR_TOTAL_HOURS }, (_, i) => CALENDAR_START_HOUR + i);
 
+export const snapTo15Min = (minutes: number): number =>
+  Math.round(minutes / 15) * 15;
+
+export const pixelToMinutes = (yPx: number, columnHeightPx: number): number => {
+  const totalMinutes = CALENDAR_TOTAL_HOURS * 60;
+  return Math.max(0, Math.min(totalMinutes, (yPx / columnHeightPx) * totalMinutes));
+};
+
 export const getWeekLabel = (monday: Date, sunday: Date): string => {
   const year = sunday.getFullYear();
   const sameMonth = monday.getMonth() === sunday.getMonth();

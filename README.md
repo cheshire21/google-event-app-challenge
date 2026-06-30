@@ -1,159 +1,189 @@
-# Turborepo starter
+# Google Events App
 
-This Turborepo starter is maintained by the Turborepo core team.
-
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest
-```
+A full-stack calendar and booking application that integrates with Google Calendar, built as a monorepo using pnpm + Turborepo.
 
 ## What's inside?
 
-This Turborepo includes the following packages/apps:
+**Apps**
+- `apps/web` — Next.js 16 frontend (port 3000)
+- `apps/api` — NestJS 11 backend (port 3001) with Prisma + PostgreSQL
 
-### Apps and Packages
+**Packages**
+- `@repo/ui` — shared React component library
+- `@repo/eslint-config` — shared ESLint configs
+- `@repo/typescript-config` — shared TypeScript configs
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Process and Decisions
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Monorepo setup
 
-### Utilities
+Started from a Turborepo scaffold and progressively added the layers needed for a production-quality codebase:
 
-This Turborepo has some additional tools already setup for you:
+- **Git** — version control from day one
+- **ESLint + Prettier** — enforced code style with shared configs across all workspaces
+- **Docker** — Compose file to run the full stack (Postgres, API, web) in containers so there are no local setup dependencies
+- **Claude Code** — used as the AI development agent throughout the project
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Libraries chosen
 
-### Build
+Selected from the start to cover the major cross-cutting concerns:
 
-To build all apps and packages, run the following command:
+| Concern | Library |
+|---|---|
+| Forms | React Hook Form + Zod |
+| API client | Axios with interceptors |
+| Server state | TanStack Query |
+| ORM | Prisma |
+| API docs | Swagger (NestJS built-in) |
+| Auth | Auth0 + custom JWT exchange |
+| UI components | shadcn/ui + Tailwind v4 |
+| Toasts | Sonner |
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### AI-assisted development workflow
+
+The project used a structured agent pipeline to ship each feature:
+
+1. **Agent OS skills** — defined best-practice rules for architecture, component structure, API conventions, and design tokens. These became the source of truth that all agents reference.
+
+2. **Shape-spec driven development** — before implementing any feature, a spec folder was created (`agent-os/specs/`) capturing scope, decisions, and which standards apply. This gave every agent enough context to make the right calls without re-explaining conventions each time.
+
+3. **Four-phase project plan** — a PM agent used the Linear MCP integration to create tickets, organize them into phases, and track progress. Phases covered: core booking CRUD → Google Calendar integration → error handling + accessibility → UX polish (drag-and-drop, toasts).
+
+4. **Pipeline per ticket** — every ticket followed the same four-step flow:
+   - PM assigns ticket and moves to In Progress
+   - Engineer agent (nestjs-engineer or nextjs-engineer) implements against the spec
+   - QA agent verifies each "Done when" criterion against the actual code
+   - PM moves to Done after QA passes
+
+5. **Human review loop** — after each spec, the standards and skills were updated to capture patterns that worked well and prevent anti-patterns the AI tended to introduce. Code that was structurally odd or unnecessarily complex was refactored before moving to the next ticket.
+
+This kept velocity high while maintaining consistent architecture — the agents didn't need to rediscover conventions on each ticket because they were encoded in the skills and standards files.
+
+## Running the project
+
+### With Docker
+
+**1. Install Docker and Docker Compose** *(required)*
+
+Download from [docs.docker.com/get-docker](https://docs.docker.com/get-docker/).
+
+**2. Set up environment files** *(required)*
+
+Copy the example env files and fill in your values:
 
 ```sh
-cd my-turborepo
-turbo build
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Without global `turbo`, use your package manager:
+**3. Build and start the full stack** *(required)*
 
 ```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+docker-compose up --build
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+This builds the images, starts Postgres, runs Prisma migrations, and starts both the API (port 3001) and web app (port 3000) in watch mode. Dependencies are installed automatically via the `install` service before the others start.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+**5. Stop the stack** *(optional)*
 
 ```sh
-turbo build --filter=docs
+docker-compose down
 ```
 
-Without global `turbo`:
+To also remove the database volume:
 
 ```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+docker-compose down -v
 ```
 
-### Develop
+---
 
-To develop all apps and packages, run the following command:
+### Without Docker (local dev)
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+**1. Install pnpm** *(required)*
 
 ```sh
-cd my-turborepo
-turbo dev
+npm install -g pnpm
 ```
 
-Without global `turbo`, use your package manager:
+**2. Install dependencies** *(required)*
 
 ```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
+pnpm install
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+**3. Set up environment files** *(required)*
 
 ```sh
-turbo dev --filter=web
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Without global `turbo`:
+**4. Start all apps in watch mode** *(required)*
 
 ```sh
-npx turbo dev --filter=web
+pnpm dev
+```
+
+Or target a specific app *(optional)*:
+
+```sh
 pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+pnpm exec turbo dev --filter=api
 ```
 
-### Remote Caching
+## Tests
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Requires the stack to be running (`docker-compose up`).
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Unit tests
 
 ```sh
-cd my-turborepo
-turbo login
+# Docker
+docker-compose exec api pnpm test
+
+# Local
+pnpm --filter=api test
 ```
 
-Without global `turbo`, use your package manager:
+Watch mode:
 
 ```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
+# Docker
+docker-compose exec api pnpm test:watch
+
+# Local
+pnpm --filter=api test:watch
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+### Coverage
 
 ```sh
-turbo link
+# Docker
+docker-compose exec api pnpm test:cov
+
+# Local
+pnpm --filter=api test:cov
 ```
 
-Without global `turbo`:
+### E2E tests
 
 ```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
+# Docker (requires postgres — already up with docker-compose up)
+docker-compose exec api pnpm test:e2e
+
+# Local
+pnpm --filter=api test:e2e
 ```
 
-## Useful Links
+### Lint + type-check (all workspaces)
 
-Learn more about the power of Turborepo:
+```sh
+# Docker
+docker-compose exec web pnpm lint
+docker-compose exec api pnpm lint
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+# Local
+pnpm lint
+pnpm check-types
+```

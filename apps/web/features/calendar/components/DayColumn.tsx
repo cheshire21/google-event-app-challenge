@@ -1,6 +1,7 @@
 "use client";
 import type { JSX } from "react";
 import type React from "react";
+import { useRef } from "react";
 import {
   CALENDAR_START_HOUR,
   CALENDAR_TOTAL_HOURS,
@@ -18,6 +19,18 @@ interface DayColumnProps {
   isToday: boolean;
   bookings: Booking[];
   onEmptyClick: (time: Date) => void;
+  dragState?: {
+    bookingId: string;
+    currentStart: Date;
+    currentEnd: Date;
+  } | null;
+  onBookingDragStart?: (
+    bookingId: string,
+    e: React.PointerEvent<HTMLDivElement>,
+    columnEl: HTMLDivElement
+  ) => void;
+  onDragMove?: (e: React.PointerEvent<HTMLDivElement>, columnEl: HTMLDivElement) => void;
+  onDragEnd?: () => void;
 }
 
 export const DayColumn = ({
@@ -25,8 +38,13 @@ export const DayColumn = ({
   events,
   bookings,
   onEmptyClick,
+  dragState,
+  onBookingDragStart,
+  onDragMove,
+  onDragEnd,
 }: DayColumnProps): JSX.Element => {
   const hours = getCalendarHours();
+  const colRef = useRef<HTMLDivElement>(null);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     if ((e.target as HTMLElement).closest('[role="dialog"]')) return;
@@ -39,14 +57,33 @@ export const DayColumn = ({
     onEmptyClick(clicked);
   };
 
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (colRef.current) {
+      onDragMove?.(e, colRef.current);
+    }
+  };
+
+  const handlePointerUp = (): void => {
+    onDragEnd?.();
+  };
+
   return (
-    <div className="relative flex-1 border-l border-border" onClick={handleClick}>
+    <div
+      ref={colRef}
+      className="relative flex-1 border-l border-border"
+      onClick={handleClick}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+    >
       {hours.map((h) => (
         <div key={h} className="h-14 border-b border-border/50" />
       ))}
       {events.map((event) => {
-        const top = getTopPercent(event.startTime);
-        const height = getHeightPercent(event.startTime, event.endTime);
+        const isDragging = dragState != null && dragState.bookingId === event.id;
+        const startTime = isDragging && dragState ? dragState.currentStart : event.startTime;
+        const endTime = isDragging && dragState ? dragState.currentEnd : event.endTime;
+        const top = getTopPercent(startTime);
+        const height = getHeightPercent(startTime, endTime);
         const bookingData =
           event.type === "booking" ? bookings.find((b) => b.id === event.id) : undefined;
         return (
@@ -56,6 +93,16 @@ export const DayColumn = ({
             topPercent={top}
             heightPercent={height}
             bookingData={bookingData}
+            isDragging={isDragging}
+            onDragStart={
+              event.type === "booking"
+                ? (e) => {
+                    if (colRef.current) {
+                      onBookingDragStart?.(event.id, e, colRef.current);
+                    }
+                  }
+                : undefined
+            }
           />
         );
       })}

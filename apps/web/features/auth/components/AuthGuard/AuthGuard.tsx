@@ -10,17 +10,19 @@ interface AuthGuardProps {
 }
 
 export const AuthGuard = ({ children, requireAuth }: AuthGuardProps): JSX.Element | null => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
+    if (isLoading) return;
     if (requireAuth && !isAuthenticated) {
       router.replace("/login");
     } else if (!requireAuth && isAuthenticated) {
       router.replace("/");
     }
-  }, [requireAuth, isAuthenticated, router]);
+  }, [isLoading, requireAuth, isAuthenticated, router]);
 
+  if (isLoading) return null;
   if (requireAuth && !isAuthenticated) return null;
   if (!requireAuth && isAuthenticated) return null;
 

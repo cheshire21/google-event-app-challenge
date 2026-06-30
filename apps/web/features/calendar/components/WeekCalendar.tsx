@@ -1,11 +1,14 @@
 "use client";
 import type { JSX } from "react";
-import { useState, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lock } from "lucide-react";
+import { toast } from "sonner";
+import type React from "react";
 import { NewBookingDialog } from "@/features/bookings/components/NewBookingDialog";
 import type { BookingFormValues } from "@/features/bookings/schemas/booking.schema";
-import { getBookingsByDateRange } from "@/features/bookings/api";
+import { getBookingsByDateRange, updateBooking as updateBookingApi } from "@/features/bookings/api";
+import type { CreateBookingPayload } from "@/features/bookings/types";
 import { WeekNavigator } from "./WeekNavigator";
 import { DayColumn } from "./DayColumn";
 import { CalendarSkeleton } from "./CalendarSkeleton";
@@ -17,12 +20,32 @@ import {
   toLocalISODate,
   getCalendarHours,
   getWeekLabel,
+  snapTo15Min,
+  pixelToMinutes,
 } from "../utils";
+
+interface DragState {
+  bookingId: string;
+  day: Date;
+  originalStart: Date;
+  originalEnd: Date;
+  currentStart: Date;
+  currentEnd: Date;
+  grabOffsetMinutes: number;
+  columnHeightPx: number;
+  durationMs: number;
+}
 
 export const WeekCalendar = (): JSX.Element => {
   const [anchor, setAnchor] = useState(() => new Date());
   const [initialTime, setInitialTime] = useState<Date | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dragState, setDragState] = useState<DragState | null>(null);
+  const dragStateRef = useRef<DragState | null>(null);
+
+  useEffect(() => {
+    dragStateRef.current = dragState;
+  }, [dragState]);
 
   const { data: user } = useCurrentUser();
   const days = getWeekDays(anchor);
@@ -37,6 +60,17 @@ export const WeekCalendar = (): JSX.Element => {
   const { data: rawBookings = [] } = useQuery({
     queryKey: ["bookings", "week", start],
     queryFn: () => getBookingsByDateRange(start, end),
+  });
+
+  const queryClient = useQueryClient();
+  const { mutate: patchBooking } = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: CreateBookingPayload }) =>
+      updateBookingApi(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+    },
+    onError: () => toast.error("Could not reschedule booking — the time slot may be taken."),
   });
 
   const today = new Date();
@@ -63,6 +97,95 @@ export const WeekCalendar = (): JSX.Element => {
     setInitialTime(time);
     setDialogOpen(true);
   }, []);
+
+  const handleDragStart = useCallback(
+    (
+      bookingId: string,
+      e: React.PointerEvent<HTMLDivElement>,
+      columnEl: HTMLDivElement,
+      day: Date
+    ): void => {
+      const booking = rawBookings.find((b) => b.id === bookingId);
+      if (!booking) return;
+
+      e.preventDefault();
+
+      const rect = columnEl.getBoundingClientRect();
+      const columnHeightPx = rect.height;
+      const yInColumn = e.clientY - rect.top;
+
+      const originalStart = new Date(booking.startTime);
+      const originalEnd = new Date(booking.endTime);
+      const durationMs = originalEnd.getTime() - originalStart.getTime();
+
+      const pointerMinutes = snapTo15Min(pixelToMinutes(yInColumn, columnHeightPx));
+      const eventStartMinutes = originalStart.getHours() * 60 + originalStart.getMinutes();
+      const grabOffsetMinutes = pointerMinutes - eventStartMinutes;
+
+      const newDragState: DragState = {
+        bookingId,
+        day,
+        originalStart,
+        originalEnd,
+        currentStart: originalStart,
+        currentEnd: originalEnd,
+        grabOffsetMinutes,
+        columnHeightPx,
+        durationMs,
+      };
+      dragStateRef.current = newDragState;
+      setDragState(newDragState);
+    },
+    [rawBookings]
+  );
+
+  const handleDragMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>, columnEl: HTMLDivElement): void => {
+      const ds = dragStateRef.current;
+      if (!ds) return;
+
+      const rect = columnEl.getBoundingClientRect();
+      const yInColumn = e.clientY - rect.top;
+      const rawMinutes = pixelToMinutes(yInColumn, rect.height);
+      const snappedMinutes = snapTo15Min(rawMinutes) - ds.grabOffsetMinutes;
+
+      const durationMinutes = ds.durationMs / (1000 * 60);
+      const clampedStart = Math.max(0, Math.min(1440 - durationMinutes, snappedMinutes));
+
+      const newStart = new Date(ds.day);
+      newStart.setHours(0, 0, 0, 0);
+      newStart.setMinutes(clampedStart);
+
+      const newEnd = new Date(newStart.getTime() + ds.durationMs);
+
+      const updated = { ...ds, currentStart: newStart, currentEnd: newEnd };
+      dragStateRef.current = updated;
+      setDragState(updated);
+    },
+    []
+  );
+
+  const handleDragEnd = useCallback((): void => {
+    const ds = dragStateRef.current;
+    if (!ds) return;
+
+    dragStateRef.current = null;
+    setDragState(null);
+
+    if (ds.currentStart.getTime() === ds.originalStart.getTime()) return;
+
+    const booking = rawBookings.find((b) => b.id === ds.bookingId);
+    if (!booking) return;
+
+    patchBooking({
+      id: ds.bookingId,
+      payload: {
+        title: booking.title,
+        startTime: ds.currentStart.toISOString(),
+        endTime: ds.currentEnd.toISOString(),
+      },
+    });
+  }, [rawBookings, patchBooking]);
 
   const initialValues: Partial<BookingFormValues> | undefined = initialTime
     ? {
@@ -131,6 +254,10 @@ export const WeekCalendar = (): JSX.Element => {
                 const dayEvents = events.filter(
                   (e) => toLocalISODate(e.startTime) === toLocalISODate(day),
                 );
+                const dayDragState =
+                  dragState && toLocalISODate(dragState.day) === toLocalISODate(day)
+                    ? dragState
+                    : null;
                 return (
                   <div key={day.toISOString()} className="flex-1 flex flex-col min-w-[80px]">
                     {/* Day header */}
@@ -154,6 +281,12 @@ export const WeekCalendar = (): JSX.Element => {
                       isToday={isToday}
                       bookings={rawBookings}
                       onEmptyClick={handleEmptyClick}
+                      dragState={dayDragState}
+                      onBookingDragStart={(bookingId, e, colEl) =>
+                        handleDragStart(bookingId, e, colEl, day)
+                      }
+                      onDragMove={(e, colEl) => handleDragMove(e, colEl)}
+                      onDragEnd={handleDragEnd}
                     />
                   </div>
                 );

@@ -4,6 +4,7 @@ import { AuthContext } from "@/features/auth/context/AuthContext";
 interface AuthContextValue {
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export const useAuth = (): AuthContextValue => {

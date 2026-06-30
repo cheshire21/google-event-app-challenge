@@ -1,10 +1,11 @@
 "use client";
 
-import { createContext, useMemo, useSyncExternalStore, type JSX, type ReactNode } from "react";
+import { createContext, useEffect, useMemo, useState, useSyncExternalStore, type JSX, type ReactNode } from "react";
 
 interface AuthContextValue {
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -19,7 +20,16 @@ const getSnapshot = (): string | null => localStorage.getItem("access_token");
 const getServerSnapshot = (): null => null;
 
 export const AuthProvider = ({ children }: { children: ReactNode }): JSX.Element => {
+  const [mounted, setMounted] = useState(false);
   const token = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const value = useMemo(() => ({ token, isAuthenticated: token !== null }), [token]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const value = useMemo(
+    () => ({ token, isAuthenticated: mounted && token !== null, isLoading: !mounted }),
+    [token, mounted]
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
